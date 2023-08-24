@@ -1,15 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTipoEquipoDto } from './dto/create-tipo_equipo.dto';
 import { UpdateTipoEquipoDto } from './dto/update-tipo_equipo.dto';
+import { TipoEquipo } from './entities/tipo_equipo.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TipoEquipoService {
+  private tiposEquipo: TipoEquipo[] = [];
+  constructor(
+    @InjectRepository(TipoEquipo)
+    private readonly tipoEquipoRepository: Repository<TipoEquipo>,
+  ) {}
+
   create(createTipoEquipoDto: CreateTipoEquipoDto) {
     return 'This action adds a new tipoEquipo';
   }
 
-  findAll() {
-    return `This action returns all tipoEquipo`;
+  public async findAll() {
+    this.tiposEquipo=await this.tipoEquipoRepository.find();
+    return this.tiposEquipo;
   }
 
   findOne(id: number) {
