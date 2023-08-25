@@ -14,11 +14,12 @@ export class Cliente {
   private telefono: string;
 
   @Column({ nullable: true })
-  private dni: string;
+  private dni?: number;
 
-  constructor(nombre: string, telefono: string) {
+  constructor(nombre: string, telefono: string, dni?:number) {
     this.nombre = nombre;
     this.telefono = telefono;
+    this.dni = dni;
   }
 
   public getIdCliente(): number {
@@ -37,6 +38,10 @@ export class Cliente {
 
   public setTelefono(newTelefono:string):void {
     this.telefono = newTelefono
+  }
+
+  public setDni(newDNI:number):void{
+    this.dni = newDNI
   }
 
   @OneToMany(()=>Orden, orden => orden.cliente)

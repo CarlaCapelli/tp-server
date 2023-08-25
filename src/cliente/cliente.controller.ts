@@ -1,14 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ClienteService } from './cliente.service';
-import { CreateClienteDto } from './dto/create-cliente.dto';
-import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { ClienteDto } from './dto/cliente.dto';
 
 @Controller('cliente')
 export class ClienteController {
   constructor(private readonly clienteService: ClienteService) {}
 
   @Post()
-  create(@Body() createClienteDto: CreateClienteDto) {
+  create(@Body() createClienteDto: ClienteDto) {
     return this.clienteService.create(createClienteDto);
   }
 
@@ -23,7 +22,7 @@ export class ClienteController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateClienteDto: UpdateClienteDto) {
+  update(@Param('id') id: string, @Body() updateClienteDto: ClienteDto) {
     return this.clienteService.update(+id, updateClienteDto);
   }
 
