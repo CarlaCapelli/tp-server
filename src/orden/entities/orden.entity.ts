@@ -31,8 +31,9 @@ export class Orden {
   @Column({ default: () => 0 })
   private estado: number;
 
-  constructor(falla: string) {
+  constructor(falla: string, accesorio:string) {
     this.falla = falla;
+    this.accesorio = accesorio;
   }
 
   public getIdOrden(): number {
@@ -45,6 +46,14 @@ export class Orden {
 
   public getFechaRevisado(): Date {
     return this.fechaRevisado;
+  };
+
+  public setFalla(falla:string) {
+    this.falla = falla
+  };
+  
+  public setFechaIngreso(fechaIngreso: Date): void {
+    this.fechaIngreso = fechaIngreso;
   };
 
   public setFechaRevisado(fechaRevisado: Date): void {

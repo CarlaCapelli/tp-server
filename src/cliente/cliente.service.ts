@@ -75,8 +75,8 @@ export class ClienteService {
   public async remove(id: number): Promise<Boolean> {
     try {
       const criterio: FindOneOptions = { where: { id: id } }
-      let ciudad = await this.clienteRepository.findOne(criterio)
-      if (!ciudad) {
+      let cliente = await this.clienteRepository.findOne(criterio)
+      if (!cliente) {
         throw new Error(`No se pudo encontrar id: ` + id)
       }
       else {
