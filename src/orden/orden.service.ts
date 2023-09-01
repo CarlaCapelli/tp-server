@@ -1,9 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Repository, FindOneOptions } from 'typeorm';
+import { Repository, FindOneOptions, FindManyOptions } from 'typeorm';
 import { OrdenDto } from './dto/orden.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Orden } from './entities/orden.entity';
-import e from 'express';
+import { Cliente } from 'src/cliente/entities/cliente.entity';
+import { ClienteService } from 'src/cliente/cliente.service';
 
 @Injectable()
 export class OrdenService {
@@ -11,32 +12,45 @@ export class OrdenService {
   constructor(
     @InjectRepository(Orden)
     private readonly ordenRepository: Repository<Orden>,
+    private readonly clienteService: ClienteService
+
   ) { }
 
-  async create(createOrdenDto: OrdenDto) {
+  async create(createOrdenDto: OrdenDto, idCliente: number) {
     try {
-      let orden: Orden = await this.ordenRepository.save(new Orden(createOrdenDto.falla, createOrdenDto.accesorio));
-      if (orden)
-        return orden;
-      else
-        throw new Error("No se pudo crear cliente");
+      const cliente = await this.clienteService.findOne(idCliente)
+
+      if (cliente) {
+        let orden = new Orden(createOrdenDto.falla, createOrdenDto.accesorio);
+        orden.cliente = cliente;
+        await this.ordenRepository.save(orden);
+
+        if (orden)
+          return orden;
+        else
+          throw new Error("No se pudo crear orden");
+      }
+      else {
+        throw new Error(`No se encontro cliente con id: ${idCliente}`);
+      }
     }
     catch (error) {
       throw new HttpException({
         status: HttpStatus.NOT_FOUND,
-        error: 'Error en la creacion de cliente' + error
+        error: 'Error en la creacion de orden' + error
       }, HttpStatus.NOT_FOUND);
     }
   };
 
   async findAll() {
-    let allOrden: Orden[] = await this.ordenRepository.find();
+    const criterio: FindManyOptions = { relations: ['cliente'] };
+    let allOrden: Orden[] = await this.ordenRepository.find(criterio);
     return allOrden;
   };
 
   async findOne(id: number) {
     try {
-      const filter: FindOneOptions = { where: { id: id } };
+      const filter: FindOneOptions = { where: { id: id }, relations: ['cliente'] };
       let orden: Orden = await this.ordenRepository.findOne(filter);
       if (orden)
         return orden;
@@ -58,7 +72,7 @@ export class OrdenService {
       if (!orden)
         throw new Error('No se encuentra la orden');
       else
-        orden.setFechaIngreso(updateOrdenDto.fechaIngreso);
+      orden.setFechaIngreso(updateOrdenDto.fechaIngreso);
       orden.setFechaEntregado(updateOrdenDto.fechaEntregado);
       orden.setFechaEntregado(updateOrdenDto.fechaEntregado);
       orden.setAccesorio(updateOrdenDto.accesorio);
