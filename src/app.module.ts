@@ -8,6 +8,8 @@ import { MarcaModule } from './marca/marca.module';
 import { ModeloModule } from './modelo/modelo.module';
 import { OrdenModule } from './orden/orden.module';
 import { TipoEquipoModule } from './tipo_equipo/tipo_equipo.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { TipoEquipoModule } from './tipo_equipo/tipo_equipo.module';
     ModeloModule,
     OrdenModule,
     TipoEquipoModule,
+    AuthModule,
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService],
