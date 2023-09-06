@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { OrdenService } from './orden.service';
 import { OrdenDto } from './dto/orden.dto';
 
@@ -6,9 +6,9 @@ import { OrdenDto } from './dto/orden.dto';
 export class OrdenController {
   constructor(private readonly ordenService: OrdenService) {}
 
-  @Post()
-  create(@Body() createOrdenDto: OrdenDto) {
-    return this.ordenService.create(createOrdenDto);
+  @Post(':idCliente')
+  create(@Body() createOrdenDto: OrdenDto, @Param('idCliente', ParseIntPipe) idCliente: number) {
+    return this.ordenService.create(createOrdenDto,idCliente);
   }
 
   @Get()

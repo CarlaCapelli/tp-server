@@ -46,6 +46,8 @@ export class Cliente {
 
   @OneToMany(()=>Orden, orden => orden.cliente)
   @JoinColumn({name:'id_orden'})
-  orden:Orden;
+  orden:Orden[];
+
+  
 
 }

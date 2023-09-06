@@ -16,7 +16,7 @@ import { TipoEquipoModule } from './tipo_equipo/tipo_equipo.module';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'tu password', // poner el password
+      password: '12345678', // poner el password
       database: 'soat',
       entities: [__dirname + '/../dist/**/entities/*.entity.{js,ts}'],
       synchronize: false,
