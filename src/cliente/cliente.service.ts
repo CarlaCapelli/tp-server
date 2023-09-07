@@ -6,7 +6,6 @@ import { Cliente } from './entities/cliente.entity';
 
 @Injectable()
 export class ClienteService {
-  private clientes: Cliente[] = [];
 
   constructor(
     @InjectRepository(Cliente)
@@ -15,16 +14,19 @@ export class ClienteService {
 
   async create(createClienteDto: ClienteDto) {
     try {
-      let cliente: Cliente = await this.clienteRepository.save(new Cliente(createClienteDto.nombre, createClienteDto.telefono, createClienteDto.dni));
-      if (cliente)
-        return cliente;
-      else
+      let newCliente: Cliente = new Cliente(createClienteDto.nombre, createClienteDto.telefono, createClienteDto.dni)
+      let cliente: Cliente = await this.clienteRepository.save(newCliente);
+
+      if (!cliente) {
         throw new Error("No se pudo crear cliente");
+      } else {
+        return cliente;
+      }
     }
     catch (error) {
       throw new HttpException({
         status: HttpStatus.NOT_FOUND,
-        error: 'Error en la creacion de cliente' + error
+        error: 'Error en la creacion de cliente: ' + error
       }, HttpStatus.NOT_FOUND);
     }
   };
@@ -38,10 +40,12 @@ export class ClienteService {
     try {
       const filter: FindOneOptions = { where: { id: id } };
       let cliente: Cliente = await this.clienteRepository.findOne(filter);
-      if (cliente)
+
+      if (!cliente) {
+        throw new Error("Error en busqueda de cliente, id: " + id);
+      } else {
         return cliente;
-      else
-        throw new Error("Error en busqueda de id: " + id);
+      }
     }
     catch (error) {
       throw new HttpException(
@@ -55,22 +59,29 @@ export class ClienteService {
     try {
       let criterio: FindOneOptions = { where: { id: id } };
       let cliente: Cliente = await this.clienteRepository.findOne(criterio);
-      if (!cliente)
+
+      if (!cliente) {
         throw new Error('No se encuentra el cliente');
-      else
-        cliente.setNombre(updateClienteDto.nombre);
+      }
+
+      cliente.setNombre(updateClienteDto.nombre);
       cliente.setTelefono(updateClienteDto.telefono);
       cliente.setDni(updateClienteDto.dni);
 
-      cliente = await this.clienteRepository.save(cliente);
-      return cliente;
+      let updatedCliente = await this.clienteRepository.save(cliente);
+
+      if (!updatedCliente) {
+        throw new Error('No se pudo actualizar cliente')
+      } else {
+        return cliente;
+      }
     } catch (error) {
       throw new HttpException({
         status: HttpStatus.NOT_FOUND,
         error: 'Error en la actiualizacion de cliente ' + error
       }, HttpStatus.NOT_FOUND);
     }
-  }
+  };
 
   public async remove(id: number): Promise<Boolean> {
     try {
@@ -78,11 +89,14 @@ export class ClienteService {
       let cliente = await this.clienteRepository.findOne(criterio)
       if (!cliente) {
         throw new Error(`No se pudo encontrar id: ` + id)
+      } 
+
+      let clienteDelete = await this.clienteRepository.delete(id)
+      if (!clienteDelete){
+        throw new Error('No se pudo borrar cliente id:'+id)
+      } else {
+        return true
       }
-      else {
-        await this.clienteRepository.delete(id)
-      }
-      return true
     }
     catch (error) {
       throw new HttpException(
@@ -90,5 +104,5 @@ export class ClienteService {
         HttpStatus.NOT_FOUND
       )
     }
-  }
+  };
 }
