@@ -7,8 +7,8 @@ export class OrdenController {
   constructor(private readonly ordenService: OrdenService) {}
 
   @Post('new')
-  create(@Body() createOrdenDto: any) {
-    return this.ordenService.create(createOrdenDto);
+  create(@Body('ordenDto') ordenDto: OrdenDto, @Body('id_cliente') id_cliente:number) {
+    return this.ordenService.create(ordenDto,id_cliente);
   }
 
   @Get()

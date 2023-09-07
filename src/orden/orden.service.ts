@@ -15,22 +15,23 @@ export class OrdenService {
     private readonly clienteRepository: Repository<Cliente>
   ) { }
 
-  async create(createOrdenDto: any) {
+  async create(ordenDto: OrdenDto, id_cliente:number):Promise<Orden> {
     try {
-      let criterioCliente: FindOneOptions = { where: { id: createOrdenDto.id_cliente } }
+      let criterioCliente: FindOneOptions = { where: { id: id_cliente } }
       let cliente: Cliente = await this.clienteRepository.findOne(criterioCliente)
 
       if (!cliente) {
         throw new Error('No existe el cliente')
       }
 
-      let orden = new Orden(createOrdenDto.falla, createOrdenDto.accesorio);
+      let orden = new Orden(ordenDto.falla, ordenDto.accesorio);
       orden.cliente = cliente;
       await this.ordenRepository.save(orden);
 
       if (orden) {
         return orden;
       }
+
       else {
         throw new Error("No se pudo crear orden");
       }
@@ -70,19 +71,20 @@ export class OrdenService {
     try {
       let criterio: FindOneOptions = { where: { id: id } };
       let orden: Orden = await this.ordenRepository.findOne(criterio);
-      if (!orden)
+      if (!orden) {
         throw new Error('No se encuentra la orden');
-      else
+      } else {
         orden.setFechaIngreso(updateOrdenDto.fechaIngreso);
-      orden.setFechaEntregado(updateOrdenDto.fechaEntregado);
-      orden.setFechaEntregado(updateOrdenDto.fechaEntregado);
-      orden.setAccesorio(updateOrdenDto.accesorio);
-      orden.setFalla(updateOrdenDto.falla);
-      orden.setInforme(updateOrdenDto.informe);
-      orden.setImporte(updateOrdenDto.importe);
-      orden.setEstado(updateOrdenDto.estado)
-      orden = await this.ordenRepository.save(orden);
-      return orden;
+        orden.setFechaEntregado(updateOrdenDto.fechaEntregado);
+        orden.setFechaEntregado(updateOrdenDto.fechaEntregado);
+        orden.setAccesorio(updateOrdenDto.accesorio);
+        orden.setFalla(updateOrdenDto.falla);
+        orden.setInforme(updateOrdenDto.informe);
+        orden.setImporte(updateOrdenDto.importe);
+        orden.setEstado(updateOrdenDto.estado)
+        orden = await this.ordenRepository.save(orden);
+        return orden;
+      }
     } catch (error) {
       throw new HttpException({
         status: HttpStatus.NOT_FOUND,
