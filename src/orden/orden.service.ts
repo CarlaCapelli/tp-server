@@ -24,17 +24,15 @@ export class OrdenService {
         throw new Error('No existe el cliente')
       }
 
-      let orden = new Orden(ordenDto.falla, ordenDto.accesorio);
-      orden.cliente = cliente;
-      await this.ordenRepository.save(orden);
+      let newOrden = new Orden(ordenDto.falla, ordenDto.accesorio);
+      newOrden.cliente = cliente;
+      let orden = await this.ordenRepository.save(newOrden);
 
-      if (orden) {
-        return orden;
-      }
-
-      else {
+      if (!orden) {
         throw new Error("No se pudo crear orden");
       }
+      return orden;
+      
     }
     catch (error) {
       throw new HttpException({
