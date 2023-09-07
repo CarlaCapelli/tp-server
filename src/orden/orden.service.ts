@@ -4,7 +4,6 @@ import { OrdenDto } from './dto/orden.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Orden } from './entities/orden.entity';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
-import { ClienteService } from 'src/cliente/cliente.service';
 
 @Injectable()
 export class OrdenService {
@@ -12,32 +11,34 @@ export class OrdenService {
   constructor(
     @InjectRepository(Orden)
     private readonly ordenRepository: Repository<Orden>,
-    private readonly clienteService: ClienteService
-
+    @InjectRepository(Cliente)
+    private readonly clienteRepository: Repository<Cliente>
   ) { }
 
-  async create(createOrdenDto: OrdenDto, idCliente: number) {
+  async create(createOrdenDto: any) {
     try {
-      const cliente = await this.clienteService.findOne(idCliente)
+      let criterioCliente: FindOneOptions = { where: { id: createOrdenDto.id_cliente } }
+      let cliente: Cliente = await this.clienteRepository.findOne(criterioCliente)
 
-      if (cliente) {
-        let orden = new Orden(createOrdenDto.falla, createOrdenDto.accesorio);
-        orden.cliente = cliente;
-        await this.ordenRepository.save(orden);
+      if (!cliente) {
+        throw new Error('No existe el cliente')
+      }
 
-        if (orden)
-          return orden;
-        else
-          throw new Error("No se pudo crear orden");
+      let orden = new Orden(createOrdenDto.falla, createOrdenDto.accesorio);
+      orden.cliente = cliente;
+      await this.ordenRepository.save(orden);
+
+      if (orden) {
+        return orden;
       }
       else {
-        throw new Error(`No se encontro cliente con id: ${idCliente}`);
+        throw new Error("No se pudo crear orden");
       }
     }
     catch (error) {
       throw new HttpException({
         status: HttpStatus.NOT_FOUND,
-        error: 'Error en la creacion de orden' + error
+        error: 'Error en la creacion de orden: ' + error
       }, HttpStatus.NOT_FOUND);
     }
   };
@@ -72,7 +73,7 @@ export class OrdenService {
       if (!orden)
         throw new Error('No se encuentra la orden');
       else
-      orden.setFechaIngreso(updateOrdenDto.fechaIngreso);
+        orden.setFechaIngreso(updateOrdenDto.fechaIngreso);
       orden.setFechaEntregado(updateOrdenDto.fechaEntregado);
       orden.setFechaEntregado(updateOrdenDto.fechaEntregado);
       orden.setAccesorio(updateOrdenDto.accesorio);
