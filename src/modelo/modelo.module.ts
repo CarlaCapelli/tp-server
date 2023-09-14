@@ -4,11 +4,12 @@ import { ModeloController } from './modelo.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Equipo } from 'src/equipo/entities/equipo.entity';
 import { Modelo } from './entities/modelo.entity';
+import { Marca } from 'src/marca/entities/marca.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature( [Modelo,
-   Equipo
+   Equipo,Marca
     ] )
     ],
   controllers: [ModeloController],

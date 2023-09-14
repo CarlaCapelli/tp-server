@@ -1,34 +1,35 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { TipoEquipoService } from './tipo_equipo.service';
-import { CreateTipoEquipoDto } from './dto/create-tipo_equipo.dto';
-import { UpdateTipoEquipoDto } from './dto/update-tipo_equipo.dto';
+import { TipoEquipoDto } from './dto/tipo_equipo.dto';
+import { TipoEquipo } from './entities/tipo_equipo.entity';
+
 
 @Controller('tipo-equipo')
 export class TipoEquipoController {
   constructor(private readonly tipoEquipoService: TipoEquipoService) {}
 
   @Post()
-  create(@Body() createTipoEquipoDto: CreateTipoEquipoDto) {
-    return this.tipoEquipoService.create(createTipoEquipoDto);
+  create(@Body() tipoEquipoDto: TipoEquipoDto):Promise<TipoEquipo> {
+    return this.tipoEquipoService.create(tipoEquipoDto);
   }
 
   @Get()
-  findAll() {
+  findAll() : Promise<TipoEquipo[]>{
     return this.tipoEquipoService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<TipoEquipo> {
     return this.tipoEquipoService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTipoEquipoDto: UpdateTipoEquipoDto) {
-    return this.tipoEquipoService.update(+id, updateTipoEquipoDto);
+  update(@Param('id') id: string, @Body() tipoEquipoDto: TipoEquipoDto): Promise<TipoEquipo> {
+    return this.tipoEquipoService.update(+id, tipoEquipoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string): Promise<boolean> {
     return this.tipoEquipoService.remove(+id);
   }
 }

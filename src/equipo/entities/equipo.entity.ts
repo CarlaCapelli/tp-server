@@ -1,11 +1,14 @@
 import { Marca } from 'src/marca/entities/marca.entity';
 import { Modelo } from 'src/modelo/entities/modelo.entity';
+import { Orden } from 'src/orden/entities/orden.entity';
 import { TipoEquipo } from 'src/tipo_equipo/entities/tipo_equipo.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  OneToMany,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity('equipo')
@@ -14,13 +17,16 @@ export class Equipo {
   private id: number;
   @Column({ nullable: true })
   private n_serie: string;
-  @ManyToOne(() => Marca, (marca) => marca.equipos)
-  marca: Marca;
-  @ManyToOne(() => Modelo, (modelo) => modelo.equipos)
+  
+  @ManyToOne(() => Modelo, (modelo) => modelo.equipos,{ nullable: false })
+  @JoinColumn()
   modelo: Modelo;
-  @ManyToOne(() => TipoEquipo, (tipoEquipo) => tipoEquipo.equipos)
+  @ManyToOne(() => TipoEquipo, (tipoEquipo) => tipoEquipo.equipos ,{ nullable: false })
+  @JoinColumn()
   tipoEquipo: TipoEquipo;
   
+  // @OneToMany(()=>Orden, orden => orden.equipo)
+  // orden:Orden;
   constructor(n_serie: string) {
     this.n_serie = n_serie;
   }

@@ -1,9 +1,11 @@
 import { Equipo } from 'src/equipo/entities/equipo.entity';
+import { Marca } from 'src/marca/entities/marca.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
+  ManyToOne,
 
 } from 'typeorm';
 
@@ -11,8 +13,10 @@ import {
 export class Modelo {
   @PrimaryGeneratedColumn()
   private id: number;
-  @Column()
+  @Column({ unique: true })
   private nombre: string;
+  @ManyToOne(() => Marca, (marca) => marca.modelos,{ nullable: false })                     
+  marca: Marca;
   @OneToMany(()=> Equipo,equipos=>equipos.modelo)
   equipos:Equipo[]
   
@@ -20,7 +24,7 @@ export class Modelo {
     this.nombre = nombre;
   }
   public getId(): number {
-    return this.id;
+    return this.id;                     
   }
   public getNombre(): string {
     return this.nombre;

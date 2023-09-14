@@ -5,7 +5,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 export class TipoEquipo {
   @PrimaryGeneratedColumn()
   private id: number;
-  @Column()
+  @Column({ unique: true })
   private nombre: string;
   @OneToMany(() => Equipo, (equipos) => equipos.tipoEquipo)
   equipos: Equipo[];

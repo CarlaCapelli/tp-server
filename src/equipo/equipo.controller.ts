@@ -1,15 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { EquipoService } from './equipo.service';
-import { CreateEquipoDto } from './dto/create-equipo.dto';
-import { UpdateEquipoDto } from './dto/update-equipo.dto';
+import { EquipoDto } from './dto/equipo.dto';
+
 
 @Controller('equipo')
 export class EquipoController {
   constructor(private readonly equipoService: EquipoService) {}
 
   @Post()
-  create(@Body() createEquipoDto: CreateEquipoDto) {
-    return this.equipoService.create(createEquipoDto);
+  create(
+    @Body('equipoDto') equipoDto: EquipoDto,
+    @Body('modeloID') modeloID: number,
+    @Body('tipoEquipoID') tipoEquipoID: number,
+  ) {
+    return this.equipoService.create(equipoDto, modeloID, tipoEquipoID);
   }
 
   @Get()
@@ -23,8 +35,8 @@ export class EquipoController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEquipoDto: UpdateEquipoDto) {
-    return this.equipoService.update(+id, updateEquipoDto);
+  update(@Param('id') id: string, @Body() equipoDto: EquipoDto) {
+    return this.equipoService.update(+id, equipoDto);
   }
 
   @Delete(':id')
