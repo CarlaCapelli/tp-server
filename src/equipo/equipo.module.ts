@@ -6,11 +6,12 @@ import { Marca } from 'src/marca/entities/marca.entity';
 import { Modelo } from 'src/modelo/entities/modelo.entity';
 import { Equipo } from './entities/equipo.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Orden } from 'src/orden/entities/orden.entity';
 
 @Module({
   imports: [
   TypeOrmModule.forFeature( [
-    Equipo,TipoEquipo,Marca,Modelo
+    Equipo,TipoEquipo,Marca,Modelo, Orden
     ] )
     ],
   controllers: [EquipoController],

@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column,JoinColumn, ManyToOne } from 'typeorm';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
+import { Equipo } from 'src/equipo/entities/equipo.entity';
 
 @Entity('orden')
 export class Orden {
@@ -107,5 +108,9 @@ export class Orden {
   @ManyToOne(()=> Cliente, cliente => cliente.orden)
   @JoinColumn({name:'id_cliente'})
   cliente: Cliente;
+
+  @ManyToOne(()=> Equipo, equipo => equipo.orden)
+  @JoinColumn({name:'id_equipo'})
+  equipo: Equipo;
 
 }

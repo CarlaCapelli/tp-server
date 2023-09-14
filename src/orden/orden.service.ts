@@ -4,6 +4,8 @@ import { OrdenDto } from './dto/orden.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Orden } from './entities/orden.entity';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
+import { CreateOrdenDto } from './dto/create-orden.dto';
+import { Equipo } from 'src/equipo/entities/equipo.entity';
 
 @Injectable()
 export class OrdenService {
@@ -12,20 +14,29 @@ export class OrdenService {
     @InjectRepository(Orden)
     private readonly ordenRepository: Repository<Orden>,
     @InjectRepository(Cliente)
-    private readonly clienteRepository: Repository<Cliente>
+    private readonly clienteRepository: Repository<Cliente>,
+    @InjectRepository(Equipo)
+    private readonly equipoRepository: Repository<Equipo>,
   ) { }
 
-  async create(ordenDto: OrdenDto, id_cliente: number): Promise<Orden> {
+  async create(ordenDto: CreateOrdenDto): Promise<Orden> {
     try {
-      let criterioCliente: FindOneOptions = { where: { id: id_cliente } }
-      let cliente: Cliente = await this.clienteRepository.findOne(criterioCliente)
+      let criterioCliente: FindOneOptions = { where: { id: ordenDto.id_cliente } };
+      let cliente: Cliente = await this.clienteRepository.findOne(criterioCliente);
 
       if (!cliente) {
         throw new Error('No existe el cliente')
-      }
+      };
+      let criterioEquipo: FindOneOptions = {where: {id: ordenDto.id_equipo}};
+      let equipo: Equipo = await this.equipoRepository.findOne(criterioEquipo);
+
+      if (!equipo){
+        throw new Error ('No se encontro el equipo')
+      };
 
       let newOrden = new Orden(ordenDto.falla, ordenDto.accesorio);
       newOrden.cliente = cliente;
+      newOrden.equipo = equipo;
       let orden = await this.ordenRepository.save(newOrden);
 
       if (!orden) {
