@@ -32,8 +32,18 @@ export class ClienteService {
   };
 
   async findAll() {
-    let allClientes: Cliente[] = await this.clienteRepository.find();
-    return allClientes;
+    try{
+      let allClientes: Cliente[] = await this.clienteRepository.find();
+      if (!allClientes){
+        throw new Error('No se pudo acceder a los datos de clientes')
+      }
+      return allClientes;
+    } catch(error) {
+      throw new HttpException({
+        status: HttpStatus.NOT_FOUND,
+        error: 'Error en la creacion de cliente: ' + error
+      }, HttpStatus.NOT_FOUND);
+    }
   }
 
   async findOne(id: number) {

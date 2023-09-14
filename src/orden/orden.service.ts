@@ -15,7 +15,7 @@ export class OrdenService {
     private readonly clienteRepository: Repository<Cliente>
   ) { }
 
-  async create(ordenDto: OrdenDto, id_cliente:number):Promise<Orden> {
+  async create(ordenDto: OrdenDto, id_cliente: number): Promise<Orden> {
     try {
       let criterioCliente: FindOneOptions = { where: { id: id_cliente } }
       let cliente: Cliente = await this.clienteRepository.findOne(criterioCliente)
@@ -32,7 +32,7 @@ export class OrdenService {
         throw new Error("No se pudo crear orden");
       }
       return orden;
-      
+
     }
     catch (error) {
       throw new HttpException({
@@ -43,9 +43,20 @@ export class OrdenService {
   };
 
   async findAll() {
-    const criterio: FindManyOptions = { relations: ['cliente'] };
-    let allOrden: Orden[] = await this.ordenRepository.find(criterio);
-    return allOrden;
+    try {
+      const criterio: FindManyOptions = { relations: ['cliente'] };
+      let allOrden: Orden[] = await this.ordenRepository.find(criterio);
+      if (!allOrden) { 
+        throw new Error('No se puedo acceder los datos')
+       }
+      return allOrden;
+    }
+    catch (error) {
+      throw new HttpException({
+        status: HttpStatus.NOT_FOUND,
+        error: 'Error en la creacion de orden: ' + error
+      }, HttpStatus.NOT_FOUND);
+    }
   };
 
   async findOne(id: number) {
@@ -102,8 +113,7 @@ export class OrdenService {
       let orden: Orden = await this.ordenRepository.findOne(criterio);
       if (!orden) {
         throw new Error('No se encuentra la orden');
-      }
-      else {
+      } else {
         newEstado = (orden.getEstado() + 1);
         if (this.checkEstado(newEstado)) {
           throw new Error('Orden ya esta en estado entregada')
