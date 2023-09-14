@@ -9,19 +9,15 @@ import {
 } from '@nestjs/common';
 import { EquipoService } from './equipo.service';
 import { EquipoDto } from './dto/equipo.dto';
-
+import { CreateEquipoDto } from './dto/createEquipo.dto';
 
 @Controller('equipo')
 export class EquipoController {
   constructor(private readonly equipoService: EquipoService) {}
 
   @Post()
-  create(
-    @Body('equipoDto') equipoDto: EquipoDto,
-    @Body('modeloID') modeloID: number,
-    @Body('tipoEquipoID') tipoEquipoID: number,
-  ) {
-    return this.equipoService.create(equipoDto, modeloID, tipoEquipoID);
+  create(@Body() createEquipoDto: CreateEquipoDto) {
+    return this.equipoService.create(createEquipoDto);
   }
 
   @Get()
