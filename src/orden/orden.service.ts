@@ -35,10 +35,9 @@ export class OrdenService {
 
     }
     catch (error) {
-      throw new HttpException({
-        status: HttpStatus.NOT_FOUND,
-        error: 'Error en la creacion de orden: ' + error
-      }, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: `${error}` },
+        HttpStatus.NOT_FOUND)
     }
   };
 
@@ -52,10 +51,9 @@ export class OrdenService {
       return allOrden;
     }
     catch (error) {
-      throw new HttpException({
-        status: HttpStatus.NOT_FOUND,
-        error: 'Error en la creacion de orden: ' + error
-      }, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: `${error}` },
+        HttpStatus.NOT_FOUND)
     }
   };
 
@@ -71,8 +69,7 @@ export class OrdenService {
     catch (error) {
       throw new HttpException(
         { status: HttpStatus.NOT_FOUND, error: `${error}` },
-        HttpStatus.NOT_FOUND
-      );
+        HttpStatus.NOT_FOUND)
     }
   };
 
@@ -95,10 +92,9 @@ export class OrdenService {
         return orden;
       }
     } catch (error) {
-      throw new HttpException({
-        status: HttpStatus.NOT_FOUND,
-        error: 'Error en la actiualizacion de la orden ' + error
-      }, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: `${error}` },
+        HttpStatus.NOT_FOUND)
     }
   };
 
@@ -116,7 +112,7 @@ export class OrdenService {
       } else {
         newEstado = (orden.getEstado() + 1);
         if (this.checkEstado(newEstado)) {
-          throw new Error('Orden ya esta en estado entregada')
+          throw new Error('Orden ya está en estado entregada')
         } else {
           orden.setEstado(newEstado)
           orden = await this.ordenRepository.save(orden);
@@ -124,10 +120,9 @@ export class OrdenService {
         }
       };
     } catch (error) {
-      throw new HttpException({
-        status: HttpStatus.NOT_FOUND,
-        error: 'Error en la actiualizacion de estado de la orden ' + error
-      }, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: `${error}` },
+        HttpStatus.NOT_FOUND)
     }
   };
 
@@ -146,8 +141,7 @@ export class OrdenService {
     catch (error) {
       throw new HttpException(
         { status: HttpStatus.NOT_FOUND, error: `${error}` },
-        HttpStatus.NOT_FOUND
-      )
+        HttpStatus.NOT_FOUND)
     }
   };
 }

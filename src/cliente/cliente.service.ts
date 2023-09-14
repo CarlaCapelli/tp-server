@@ -24,10 +24,9 @@ export class ClienteService {
       }
     }
     catch (error) {
-      throw new HttpException({
-        status: HttpStatus.NOT_FOUND,
-        error: 'Error en la creacion de cliente: ' + error
-      }, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: `${error}` },
+        HttpStatus.NOT_FOUND)
     }
   };
 
@@ -39,10 +38,9 @@ export class ClienteService {
       }
       return allClientes;
     } catch(error) {
-      throw new HttpException({
-        status: HttpStatus.NOT_FOUND,
-        error: 'Error en la creacion de cliente: ' + error
-      }, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: `${error}` },
+        HttpStatus.NOT_FOUND)
     }
   }
 
@@ -60,8 +58,7 @@ export class ClienteService {
     catch (error) {
       throw new HttpException(
         { status: HttpStatus.NOT_FOUND, error: `${error}` },
-        HttpStatus.NOT_FOUND
-      );
+        HttpStatus.NOT_FOUND)
     }
   };
 
@@ -86,10 +83,9 @@ export class ClienteService {
         return cliente;
       }
     } catch (error) {
-      throw new HttpException({
-        status: HttpStatus.NOT_FOUND,
-        error: 'Error en la actiualizacion de cliente ' + error
-      }, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: `${error}` },
+        HttpStatus.NOT_FOUND)
     }
   };
 
@@ -111,8 +107,7 @@ export class ClienteService {
     catch (error) {
       throw new HttpException(
         { status: HttpStatus.NOT_FOUND, error: `${error}` },
-        HttpStatus.NOT_FOUND
-      )
+        HttpStatus.NOT_FOUND)
     }
   };
 }
