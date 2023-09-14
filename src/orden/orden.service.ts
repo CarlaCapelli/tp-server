@@ -70,7 +70,7 @@ export class OrdenService {
 
   async findOne(id: number) {
     try {
-      const filter: FindOneOptions = { where: { id: id }, relations: ['cliente'] };
+      const filter: FindOneOptions = { where: { id: id }, relations: ['cliente','equipo'] };
       let orden: Orden = await this.ordenRepository.findOne(filter);
       if (orden)
         return orden;
@@ -98,7 +98,7 @@ export class OrdenService {
         orden.setFalla(updateOrdenDto.falla);
         orden.setInforme(updateOrdenDto.informe);
         orden.setImporte(updateOrdenDto.importe);
-        orden.setEstado(updateOrdenDto.estado)
+        orden.setEstado(updateOrdenDto.estado);
         orden = await this.ordenRepository.save(orden);
         return orden;
       }
