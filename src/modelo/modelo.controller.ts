@@ -2,16 +2,16 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ModeloService } from './modelo.service';
 import { ModeloDto } from './dto/modelo.dto';
 import { Marca } from 'src/marca/entities/marca.entity';
+import { CreateModeloDto } from './dto/createModelo.dto';
 
 @Controller('modelo')
 export class ModeloController {
   constructor(private readonly modeloService: ModeloService) {}
 
   @Post()
-  create(@Body('modeloDto') createModeloDto: ModeloDto,@Body('marca')marcaID:number) {
-    return this.modeloService.create(createModeloDto,marcaID);
+  create(@Body() createModeloDto: CreateModeloDto) {
+    return this.modeloService.create(createModeloDto);
   }
-
   @Get()
   findAll() {
     return this.modeloService.findAll();

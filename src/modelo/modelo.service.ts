@@ -8,6 +8,7 @@ import { Modelo } from './entities/modelo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { Marca } from 'src/marca/entities/marca.entity';
+import { CreateModeloDto } from './dto/createModelo.dto';
 
 
 @Injectable()
@@ -20,12 +21,12 @@ export class ModeloService {
     private readonly marcaRepository: Repository<Marca>,
   ) {}
 
-  async create(modeloDto: ModeloDto, marcaID: number): Promise<Modelo> {
+  async create(createModeloDto: CreateModeloDto): Promise<Modelo> {
     try {
-      const criterioMarca: FindOneOptions = { where: { id: marcaID } };
+      const criterioMarca: FindOneOptions = { where: { id: createModeloDto.marcaID } };
       let marca: Marca = await this.marcaRepository.findOne(criterioMarca);
       if (!marca) throw new Error('No se encontro una marca con ese ID');
-      const criterioModelo: FindOneOptions={where:{nombre: modeloDto.nombre}}
+      const criterioModelo: FindOneOptions={where:{nombre: createModeloDto.nombre}}
       let modeloExistente=await  this.modeloRepository.findOne(criterioModelo)
         if (modeloExistente) {
           throw new HttpException(
@@ -36,7 +37,7 @@ export class ModeloService {
             HttpStatus.BAD_REQUEST,
           );
         } else {
-          const modelo = new Modelo(modeloDto.nombre);
+          const modelo = new Modelo(createModeloDto.nombre);
           modelo.marca = marca;
           return await this.modeloRepository.save(modelo);
         }

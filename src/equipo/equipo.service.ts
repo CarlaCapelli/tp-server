@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TipoEquipo } from 'src/tipo_equipo/entities/tipo_equipo.entity';
 import { Modelo } from 'src/modelo/entities/modelo.entity';
+import { CreateEquipoDto } from './dto/createEquipo.dto';
 
 @Injectable()
 export class EquipoService {
@@ -19,19 +20,18 @@ export class EquipoService {
   ) {}
   
   async create(
-    equipoDto: EquipoDto,
-    modeloID: number,
-    tipoEquipoID: number,
+    createEquipoDto: CreateEquipoDto,
+   
   ): Promise<Equipo> {
     try {
-      let criterioModelo: FindOneOptions = { where: { id: modeloID } };
+      let criterioModelo: FindOneOptions = { where: { id: createEquipoDto.modeloID } };
       let modelo = await this.modeloRepository.findOne(criterioModelo);
-      let criterioTipoEquipo: FindOneOptions = { where: { id: tipoEquipoID } };
+      let criterioTipoEquipo: FindOneOptions = { where: { id: createEquipoDto.tipoEquipoID } };
       let tipoEquipo = await this.tipoEquipoRepository.findOne(
         criterioTipoEquipo,
       );
       if (modelo && tipoEquipo) {
-        let nuevoEquipo = new Equipo(equipoDto.n_serie);
+        let nuevoEquipo = new Equipo(createEquipoDto.n_serie);
         nuevoEquipo.modelo = modelo;
         nuevoEquipo.tipoEquipo = tipoEquipo;
 
