@@ -15,18 +15,21 @@ import {
 export class Equipo {
   @PrimaryGeneratedColumn()
   private id: number;
+  
   @Column({ nullable: true })
   private n_serie: string;
   
   @ManyToOne(() => Modelo, (modelo) => modelo.equipos,{ nullable: false })
   @JoinColumn()
   modelo: Modelo;
+
   @ManyToOne(() => TipoEquipo, (tipoEquipo) => tipoEquipo.equipos ,{ nullable: false })
   @JoinColumn()
   tipoEquipo: TipoEquipo;
   
-  // @OneToMany(()=>Orden, orden => orden.equipo)
-  // orden:Orden;
+  @OneToMany(()=>Orden, orden => orden.equipo)
+  orden:Orden;
+
   constructor(n_serie: string) {
     this.n_serie = n_serie;
   }

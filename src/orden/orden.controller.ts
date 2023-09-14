@@ -1,14 +1,15 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { OrdenService } from './orden.service';
 import { OrdenDto } from './dto/orden.dto';
+import { CreateOrdenDto } from './dto/create-orden.dto';
 
 @Controller('orden')
 export class OrdenController {
   constructor(private readonly ordenService: OrdenService) {}
 
   @Post('new')
-  create(@Body('ordenDto') ordenDto: OrdenDto, @Body('id_cliente') id_cliente:number) {
-    return this.ordenService.create(ordenDto,id_cliente);
+  create(@Body() createOrdenDto: CreateOrdenDto) {
+    return this.ordenService.create(createOrdenDto);
   }
 
   @Get()
