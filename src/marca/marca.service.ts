@@ -1,9 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { CreateMarcaDto } from './dto/create-marca.dto';
-import { UpdateMarcaDto } from './dto/update-marca.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { MarcaDto } from './dto/marca.dto';
 import { Marca } from './entities/marca.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 
 @Injectable()
 export class MarcaService {
@@ -12,26 +11,100 @@ export class MarcaService {
     @InjectRepository(Marca)
     private readonly marcaRepository: Repository<Marca>,
   ) {}
-  create(createMarcaDto: CreateMarcaDto) {
-    return 'This action adds a new marca';
+
+  async create(marcaDto: MarcaDto): Promise<Marca> {
+    const marcaExistente = await this.marcaRepository
+      .createQueryBuilder('marca')
+      .where('marca.nombre = :nombre', { nombre: marcaDto.nombre })
+      .getOne();
+
+    if (marcaExistente) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Ya existe una marca con este nombre.',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    try {
+      let marca: Marca = await this.marcaRepository.save(
+        new Marca(marcaDto.nombre),
+      );
+      return marca;
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Error al crear la marca ' + error,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
- public async findAll() {
-    this.marcas=await this.marcaRepository.find();
+  public async findAll(): Promise<Marca[]> {
+    this.marcas = await this.marcaRepository.find();
     return this.marcas;
   }
 
-
-
-  findOne(id: number) {
-    return `This action returns a #${id} marca`;
+  public async findOne(id: number): Promise<Marca> {
+    try {
+      const criterio: FindOneOptions = { where: { id: id } };
+      let marca: Marca = await this.marcaRepository.findOne(criterio);
+      if (marca) return marca;
+      else throw new Error('No se encontro una marca con ese ID');
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Error en encontrar el ID ' + error,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 
-  update(id: number, updateMarcaDto: UpdateMarcaDto) {
-    return `This action updates a #${id} marca`;
+  async update(id: number, marcaDto: MarcaDto): Promise<Marca> {
+    try {
+      const criterio: FindOneOptions = { where: { id: id } };
+      let marca: Marca = await this.marcaRepository.findOne(criterio);
+      if (marca) {
+        marca.setNombre(marcaDto.nombre);
+        marca = await this.marcaRepository.save(marca);
+        return marca;
+      } else {
+        throw new Error('No se pudo actualizar');
+      }
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Error al actualizar ' + error,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} marca`;
+  async remove(id: number): Promise<boolean> {
+    try {
+      const criterio: FindOneOptions = { where: { id: id } };
+      let marca: Marca = await this.marcaRepository.findOne(criterio);
+      if (!marca) throw new Error('No se pudo eliminar');
+      else {
+        await this.marcaRepository.delete(id);
+        return true;
+      }
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Error al eliminar ' + error,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 }

@@ -1,15 +1,15 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ModeloService } from './modelo.service';
-import { CreateModeloDto } from './dto/create-modelo.dto';
-import { UpdateModeloDto } from './dto/update-modelo.dto';
+import { ModeloDto } from './dto/modelo.dto';
+import { Marca } from 'src/marca/entities/marca.entity';
 
 @Controller('modelo')
 export class ModeloController {
   constructor(private readonly modeloService: ModeloService) {}
 
   @Post()
-  create(@Body() createModeloDto: CreateModeloDto) {
-    return this.modeloService.create(createModeloDto);
+  create(@Body('modeloDto') createModeloDto: ModeloDto,@Body('marca')marcaID:number) {
+    return this.modeloService.create(createModeloDto,marcaID);
   }
 
   @Get()
@@ -23,8 +23,8 @@ export class ModeloController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateModeloDto: UpdateModeloDto) {
-    return this.modeloService.update(+id, updateModeloDto);
+  update(@Param('id') id: string, @Body() modeloDto: ModeloDto) {
+    return this.modeloService.update(+id, modeloDto);
   }
 
   @Delete(':id')

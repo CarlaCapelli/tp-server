@@ -1,38 +1,120 @@
-import { Injectable } from '@nestjs/common';
-import { CreateEquipoDto } from './dto/create-equipo.dto';
-import { UpdateEquipoDto } from './dto/update-equipo.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { EquipoDto } from './dto/equipo.dto';
 import { Equipo } from './entities/equipo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { TipoEquipo } from 'src/tipo_equipo/entities/tipo_equipo.entity';
+import { Modelo } from 'src/modelo/entities/modelo.entity';
 
 @Injectable()
 export class EquipoService {
   private equipos: Equipo[] = [];
   constructor(
     @InjectRepository(Equipo)
-    private readonly ciudadRepository: Repository<Equipo>,
+    private readonly equipoRepository: Repository<Equipo>,
+    @InjectRepository(Modelo)
+    private readonly modeloRepository: Repository<Modelo>,
+    @InjectRepository(TipoEquipo)
+    private readonly tipoEquipoRepository: Repository<TipoEquipo>,
   ) {}
-  create(createEquipoDto: CreateEquipoDto) {
-    return 'This action adds a new equipo';
+  
+  async create(
+    equipoDto: EquipoDto,
+    modeloID: number,
+    tipoEquipoID: number,
+  ): Promise<Equipo> {
+    try {
+      let criterioModelo: FindOneOptions = { where: { id: modeloID } };
+      let modelo = await this.modeloRepository.findOne(criterioModelo);
+      let criterioTipoEquipo: FindOneOptions = { where: { id: tipoEquipoID } };
+      let tipoEquipo = await this.tipoEquipoRepository.findOne(
+        criterioTipoEquipo,
+      );
+      if (modelo && tipoEquipo) {
+        let nuevoEquipo = new Equipo(equipoDto.n_serie);
+        nuevoEquipo.modelo = modelo;
+        nuevoEquipo.tipoEquipo = tipoEquipo;
+
+        let equipo: Equipo = await this.equipoRepository.save(nuevoEquipo);
+        if (!equipo) throw new Error('No se pudo agregar el equipo');
+        else return equipo;
+      }
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Error al crear el equipo ' + error,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 
   async findAll(): Promise<Equipo[]> {
     const criterio: FindManyOptions = {
-      relations: ['marca', 'modelo', 'tipoEquipo'],
+      relations: ['modelo', 'modelo.marca', 'tipoEquipo'],
     };
-    this.equipos = await this.ciudadRepository.find(criterio);
+    this.equipos = await this.equipoRepository.find(criterio);
     return this.equipos;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} equipo`;
+  public async findOne(id: number): Promise<Equipo> {
+    try {
+      const criterio: FindOneOptions = {
+        where: { id: id },
+        relations: ['modelo', 'modelo.marca', 'tipoEquipo'],
+      };
+      let equipo: Equipo = await this.equipoRepository.findOne(criterio);
+      if (!equipo) throw new Error('No se encontro un equipo con ese ID');
+      else return equipo
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Error en encontrar el ID ' + error,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 
-  update(id: number, updateEquipoDto: UpdateEquipoDto) {
-    return `This action updates a #${id} equipo`;
+  async update(id: number, equipoDto: EquipoDto): Promise<Equipo> {
+    try {
+      const criterio: FindOneOptions = { where: { id: id } };
+      let equipo: Equipo = await this.equipoRepository.findOne(criterio);
+      if (!equipo)  throw new Error('No se pudo actualizar');
+       else  { equipo.setNSerie(equipoDto.n_serie);
+      equipo = await this.equipoRepository.save(equipo);
+      return equipo;
+      }
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Error al actualizar ' + error,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} equipo`;
+  async remove(id: number): Promise<boolean> {
+    try {
+      const criterio: FindOneOptions = { where: { id: id } };
+      let equipo: Equipo = await this.equipoRepository.findOne(criterio);
+      if (!equipo) throw new Error('No se pudo eliminar');
+      else {
+        await this.equipoRepository.delete(id);
+        return true;
+      }
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Error al eliminar ' + error,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 }

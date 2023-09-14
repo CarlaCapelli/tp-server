@@ -1,4 +1,4 @@
-import { Equipo } from 'src/equipo/entities/equipo.entity';
+import { Modelo } from 'src/modelo/entities/modelo.entity';
 import {
     Entity,
     PrimaryGeneratedColumn,
@@ -11,10 +11,10 @@ import {
   export class Marca {
     @PrimaryGeneratedColumn()
     private id: number;
-    @Column()
+    @Column({ unique: true })
     private nombre: string;
-   @OneToMany(()=> Equipo,equipos=>equipos.marca)
-    equipos:Equipo[]
+   @OneToMany(()=> Modelo,modelos=>modelos.marca)
+    modelos:Modelo[]
  
     constructor(nombre: string) {
       this.nombre = nombre;

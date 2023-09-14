@@ -1,14 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { MarcaService } from './marca.service';
-import { CreateMarcaDto } from './dto/create-marca.dto';
-import { UpdateMarcaDto } from './dto/update-marca.dto';
+import { MarcaDto } from './dto/marca.dto';
 
 @Controller('marca')
 export class MarcaController {
   constructor(private readonly marcaService: MarcaService) {}
 
   @Post()
-  create(@Body() createMarcaDto: CreateMarcaDto) {
+  create(@Body() createMarcaDto: MarcaDto) {
     return this.marcaService.create(createMarcaDto);
   }
 
@@ -23,8 +22,8 @@ export class MarcaController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMarcaDto: UpdateMarcaDto) {
-    return this.marcaService.update(+id, updateMarcaDto);
+  update(@Param('id') id: string, @Body() marcaDto: MarcaDto) {
+    return this.marcaService.update(+id, marcaDto);
   }
 
   @Delete(':id')
