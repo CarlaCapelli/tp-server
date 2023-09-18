@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository, FindOneOptions, FindManyOptions } from 'typeorm';
-import { OrdenDto } from './dto/orden.dto';
+import { UpdateOrdenDto } from './dto/update-orden.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Orden } from './entities/orden.entity';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
@@ -23,15 +23,14 @@ export class OrdenService {
     try {
       let criterioCliente: FindOneOptions = { where: { id: ordenDto.id_cliente } };
       let cliente: Cliente = await this.clienteRepository.findOne(criterioCliente);
-
       if (!cliente) {
-        throw new Error('No existe el cliente')
+        throw new Error('No se encontró cliente con id: '+ordenDto.id_cliente)
       };
-      let criterioEquipo: FindOneOptions = {where: {id: ordenDto.id_equipo}};
-      let equipo: Equipo = await this.equipoRepository.findOne(criterioEquipo);
 
-      if (!equipo){
-        throw new Error ('No se encontro el equipo')
+      let criterioEquipo: FindOneOptions = { where: { id: ordenDto.id_equipo } };
+      let equipo: Equipo = await this.equipoRepository.findOne(criterioEquipo);
+      if (!equipo) {
+        throw new Error('No se encontró el equipo id: '+ordenDto.id_equipo)
       };
 
       let newOrden = new Orden(ordenDto.falla, ordenDto.accesorio);
@@ -54,11 +53,11 @@ export class OrdenService {
 
   async findAll() {
     try {
-      const criterio: FindManyOptions = { relations: ['cliente'] };
+      const criterio: FindManyOptions = { relations: ['cliente', 'equipo'] };
       let allOrden: Orden[] = await this.ordenRepository.find(criterio);
-      if (!allOrden) { 
+      if (!allOrden) {
         throw new Error('No se puedo acceder los datos')
-       }
+      }
       return allOrden;
     }
     catch (error) {
@@ -70,12 +69,12 @@ export class OrdenService {
 
   async findOne(id: number) {
     try {
-      const filter: FindOneOptions = { where: { id: id }, relations: ['cliente','equipo'] };
+      const filter: FindOneOptions = { where: { id: id }, relations: ['cliente', 'equipo'] };
       let orden: Orden = await this.ordenRepository.findOne(filter);
       if (orden)
         return orden;
       else
-        throw new Error("Error en busqueda de id: " + id);
+        throw new Error("No se encontró orden con id: " + id);
     }
     catch (error) {
       throw new HttpException(
@@ -84,24 +83,40 @@ export class OrdenService {
     }
   };
 
-  async update(id: number, updateOrdenDto: OrdenDto) {
+  async update(id: number, updateOrdenDto: UpdateOrdenDto) {
     try {
       let criterio: FindOneOptions = { where: { id: id } };
       let orden: Orden = await this.ordenRepository.findOne(criterio);
       if (!orden) {
-        throw new Error('No se encuentra la orden');
-      } else {
-        orden.setFechaIngreso(updateOrdenDto.fechaIngreso);
-        orden.setFechaEntregado(updateOrdenDto.fechaEntregado);
-        orden.setFechaEntregado(updateOrdenDto.fechaEntregado);
-        orden.setAccesorio(updateOrdenDto.accesorio);
-        orden.setFalla(updateOrdenDto.falla);
-        orden.setInforme(updateOrdenDto.informe);
-        orden.setImporte(updateOrdenDto.importe);
-        orden.setEstado(updateOrdenDto.estado);
-        orden = await this.ordenRepository.save(orden);
-        return orden;
+        throw new Error('No se encuentra la orden id: '+id);
       }
+
+      let criterioCliente: FindOneOptions = { where: { id: updateOrdenDto.id_cliente } };
+      let cliente: Cliente = await this.clienteRepository.findOne(criterioCliente);
+      if (!cliente) {
+        throw new Error('No se encontró el cliente id: '+updateOrdenDto.id_cliente)
+      }
+
+      let criterioEquipo: FindOneOptions = { where: { id: updateOrdenDto.id_equipo } };
+      let equipo: Equipo = await this.equipoRepository.findOne(criterioEquipo);
+      if (!equipo) {
+        throw new Error('No se encontró el equipo id: '+updateOrdenDto.id_equipo)
+      }
+
+      orden.setFechaIngreso(updateOrdenDto.fechaIngreso);
+      orden.setFechaEntregado(updateOrdenDto.fechaEntregado);
+      orden.setFechaEntregado(updateOrdenDto.fechaEntregado);
+      orden.setAccesorio(updateOrdenDto.accesorio);
+      orden.setFalla(updateOrdenDto.falla);
+      orden.setInforme(updateOrdenDto.informe);
+      orden.setImporte(updateOrdenDto.importe);
+      orden.setEstado(updateOrdenDto.estado);
+
+      orden.cliente = cliente;
+      orden.equipo = equipo;
+      orden = await this.ordenRepository.save(orden);
+      return orden;
+
     } catch (error) {
       throw new HttpException(
         { status: HttpStatus.NOT_FOUND, error: `${error}` },
@@ -119,11 +134,11 @@ export class OrdenService {
       let criterio: FindOneOptions = { where: { id: id } };
       let orden: Orden = await this.ordenRepository.findOne(criterio);
       if (!orden) {
-        throw new Error('No se encuentra la orden');
+        throw new Error('No se encuentra la orden id: '+id);
       } else {
         newEstado = (orden.getEstado() + 1);
         if (this.checkEstado(newEstado)) {
-          throw new Error('Orden ya está en estado entregada')
+          throw new Error(`Orden ${id} ya está en estado entregada`)
         } else {
           orden.setEstado(newEstado)
           orden = await this.ordenRepository.save(orden);

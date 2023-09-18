@@ -8,28 +8,28 @@ export class Orden {
   @PrimaryGeneratedColumn()
   private id: number;
 
-  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ default: () => 'CURRENT_TIMESTAMP', type: 'date', nullable: false })
   private fechaIngreso: Date;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'date'})
   private fechaRevisado: Date;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'date' })
   private fechaEntregado: Date;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar', length: 250 })
   private accesorio: string;
 
-  @Column()
+  @Column({ nullable: false, type: 'varchar', length: 550 })
   private falla: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar', length: 600 })
   private informe: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'decimal', precision: 12, scale: 2})
   private importe: number;
 
-  @Column({ default: () => 0 })
+  @Column({ default: () => 0, type: 'tinyint', width: 1 })
   private estado: number;
 
   constructor(falla: string, accesorio:string) {

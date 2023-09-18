@@ -7,13 +7,13 @@ export class Cliente {
   @PrimaryGeneratedColumn()
   private id: number;
 
-  @Column()
+  @Column({nullable: false, type: 'varchar', length: 550 })
   private nombre: string;
 
-  @Column()
+  @Column({nullable: false, type: 'varchar', length: 50 })
   private telefono: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'integer', width: 10})
   private dni?: number;
 
   constructor(nombre: string, telefono: string, dni?:number) {
@@ -44,10 +44,12 @@ export class Cliente {
     this.dni = newDNI
   }
 
+  public getDni():number{
+    return this.dni
+  }
+
   @OneToMany(()=>Orden, orden => orden.cliente)
   @JoinColumn({name:'id_orden'})
   orden:Orden[];
-
-  
 
 }
