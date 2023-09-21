@@ -10,6 +10,7 @@ import { OrdenModule } from './orden/orden.module';
 import { TipoEquipoModule } from './tipo_equipo/tipo_equipo.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { TableViewModule } from './view/tableView.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { UsersModule } from './users/users.module';
     OrdenModule,
     TipoEquipoModule,
     AuthModule,
-    UsersModule
+    UsersModule,
+    TableViewModule
   ],
   controllers: [AppController],
   providers: [AppService],
