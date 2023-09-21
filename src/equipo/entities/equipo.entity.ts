@@ -1,22 +1,14 @@
-import { Marca } from 'src/marca/entities/marca.entity';
 import { Modelo } from 'src/modelo/entities/modelo.entity';
 import { Orden } from 'src/orden/entities/orden.entity';
 import { TipoEquipo } from 'src/tipo_equipo/entities/tipo_equipo.entity';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 
 @Entity('equipo')
 export class Equipo {
   @PrimaryGeneratedColumn()
   private id: number;
   
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar', length: 100 })
   private n_serie: string;
   
   @ManyToOne(() => Modelo, (modelo) => modelo.equipos,{ nullable: false })
@@ -33,6 +25,7 @@ export class Equipo {
   constructor(n_serie: string) {
     this.n_serie = n_serie;
   }
+  
   public getId(): number {
     return this.id;
   }
