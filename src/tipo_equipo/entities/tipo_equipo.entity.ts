@@ -3,16 +3,20 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('tipoEquipo')
 export class TipoEquipo {
+
   @PrimaryGeneratedColumn()
   private id: number;
-  @Column({ unique: true })
+
+  @Column({ unique: true, type: 'varchar', length: 50  })
   private nombre: string;
+
   @OneToMany(() => Equipo, (equipos) => equipos.tipoEquipo)
   equipos: Equipo[];
 
   constructor(nombre: string) {
     this.nombre = nombre;
-  }
+  };
+
   public getId(): number {
     return this.id;
   }
