@@ -1,5 +1,13 @@
+import { IsNotEmpty, IsNumber, IsString, MaxLength } from 'class-validator';
+
 export class CreateEquipoDto {
-    readonly n_serie: string;
-    readonly modeloID: number;
-    readonly tipoEquipoID: number;
-  }
+
+  @IsNotEmpty() @IsString() @MaxLength (100)
+  readonly n_serie: string;
+
+  @IsNotEmpty() @IsNumber()
+  readonly modeloID: number;
+
+  @IsNotEmpty() @IsNumber()
+  readonly tipoEquipoID: number;
+}
