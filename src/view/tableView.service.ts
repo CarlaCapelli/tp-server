@@ -14,5 +14,14 @@ export class TableViewService {
     return this.ordenesRepository.find();
   }
 
- 
+  async findByStatus(estado: number): Promise<TableView[]> {
+    try {
+      const ordenes = await this.ordenesRepository.find({
+        where: { estado },
+      });
+      return ordenes;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
