@@ -1,14 +1,14 @@
-// src/orden/orden.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-// Importa el servicio
 import { TableView } from './tableView.entity';
 import { TableViewController } from './tableView.controller';
 import { TableViewService } from './tableView.service';
+import { Equipo } from 'src/equipo/entities/equipo.entity';
+import { Cliente } from 'src/cliente/entities/cliente.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([TableView])],
+  imports: [TypeOrmModule.forFeature([TableView,Equipo,Cliente])],
   controllers: [TableViewController],
-  providers: [TableViewService], // Registra el servicio
+  providers: [TableViewService],
 })
 export class TableViewModule {}
