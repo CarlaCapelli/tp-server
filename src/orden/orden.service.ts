@@ -6,6 +6,7 @@ import { Orden } from './entities/orden.entity';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
 import { CreateOrdenDto } from './dto/create-orden.dto';
 import { Equipo } from 'src/equipo/entities/equipo.entity';
+import { getManager } from 'typeorm';
 
 @Injectable()
 export class OrdenService {
@@ -20,6 +21,7 @@ export class OrdenService {
   ) { }
 
   async create(ordenDto: CreateOrdenDto): Promise<Orden> {
+
     try {
       let criterioCliente: FindOneOptions = { where: { id: ordenDto.id_cliente } };
       let cliente: Cliente = await this.clienteRepository.findOne(criterioCliente);
@@ -33,9 +35,10 @@ export class OrdenService {
         throw new Error('No se encontró el equipo id: '+ordenDto.id_equipo)
       };
 
-      let newOrden = new Orden(ordenDto.falla, ordenDto.accesorio);
+      let newOrden = new Orden(ordenDto.falla, ordenDto.accesorio, this.fechaActual());
       newOrden.cliente = cliente;
       newOrden.equipo = equipo;
+
       let orden = await this.ordenRepository.save(newOrden);
 
       if (!orden) {
@@ -124,23 +127,36 @@ export class OrdenService {
     }
   };
 
-  private checkEstado(estadoToCheck: number): boolean {
-    return estadoToCheck > 2 || estadoToCheck < 0;
-  };
+  private fechaActual(): Date {
+    const currentDate = new Date();
+    const formattedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+    return formattedDate
+  }
 
   async changeEstado(id: number) {
     try {
-      let newEstado: number = 0;
+      let estado: number = 0;
       let criterio: FindOneOptions = { where: { id: id } };
       let orden: Orden = await this.ordenRepository.findOne(criterio);
       if (!orden) {
         throw new Error('No se encuentra la orden id: '+id);
       } else {
-        newEstado = (orden.getEstado() + 1);
-        if (this.checkEstado(newEstado)) {
+        estado = orden.getEstado();
+        if (estado == 2) {
           throw new Error(`Orden ${id} ya está en estado entregada`)
         } else {
-          orden.setEstado(newEstado)
+          let estado = orden.getEstado()
+
+          switch (estado) {
+          case 0:     /// Si la orden pasa de Pendiente a Terminada
+              orden.setEstado(1)
+              orden.setFechaRevisado(this.fechaActual())
+              break
+          case 1:    /// Si la orden pasa de Terminada a Entregada
+              orden.setEstado(2)
+              orden.setFechaEntregado(this.fechaActual())
+              break
+          }
           orden = await this.ordenRepository.save(orden);
           return orden
         }
