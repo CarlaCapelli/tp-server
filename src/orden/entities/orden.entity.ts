@@ -8,7 +8,7 @@ export class Orden {
   @PrimaryGeneratedColumn()
   private id: number;
 
-  @Column({ default: () => 'CURRENT_TIMESTAMP', type: 'date', nullable: false })
+  @Column({ type: 'date', nullable: false })
   private fechaIngreso: Date;
 
   @Column({ nullable: true, type: 'date'})
@@ -32,9 +32,10 @@ export class Orden {
   @Column({ default: () => 0, type: 'tinyint', width: 1 })
   private estado: number;
 
-  constructor(falla: string, accesorio:string) {
+  constructor(falla: string, accesorio:string, fechaIngreso:Date) {
     this.falla = falla;
     this.accesorio = accesorio;
+    this.fechaIngreso = fechaIngreso
   }
 
   public getIdOrden(): number {
