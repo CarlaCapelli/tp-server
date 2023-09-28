@@ -1,12 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository, FindOneOptions, FindManyOptions } from 'typeorm';
-import { UpdateOrdenDto } from './dto/update-orden.dto';
+/*import { UpdateOrdenDto } from './dto/update-orden.dto';*/
 import { InjectRepository } from '@nestjs/typeorm';
 import { Orden } from './entities/orden.entity';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
 import { CreateOrdenDto } from './dto/create-orden.dto';
 import { Equipo } from 'src/equipo/entities/equipo.entity';
 import { getManager } from 'typeorm';
+import { PartialUpdateOrdenDto } from './dto/partial-update-orden.dto';
 
 @Injectable()
 export class OrdenService {
@@ -26,13 +27,13 @@ export class OrdenService {
       let criterioCliente: FindOneOptions = { where: { id: ordenDto.id_cliente } };
       let cliente: Cliente = await this.clienteRepository.findOne(criterioCliente);
       if (!cliente) {
-        throw new Error('No se encontró cliente con id: '+ordenDto.id_cliente)
+        throw new Error('No se encontró cliente con id: ' + ordenDto.id_cliente)
       };
 
       let criterioEquipo: FindOneOptions = { where: { id: ordenDto.id_equipo } };
       let equipo: Equipo = await this.equipoRepository.findOne(criterioEquipo);
       if (!equipo) {
-        throw new Error('No se encontró el equipo id: '+ordenDto.id_equipo)
+        throw new Error('No se encontró el equipo id: ' + ordenDto.id_equipo)
       };
 
       let newOrden = new Orden(ordenDto.falla, ordenDto.accesorio, this.fechaActual());
@@ -72,7 +73,7 @@ export class OrdenService {
 
   async findOne(id: number) {
     try {
-      const filter: FindOneOptions = { where: { id: id }, relations: ['cliente', 'equipo', 'equipo.tipoEquipo','equipo.modelo.marca', 'equipo.modelo'] };
+      const filter: FindOneOptions = { where: { id: id }, relations: ['cliente', 'equipo', 'equipo.tipoEquipo', 'equipo.modelo.marca', 'equipo.modelo'] };
       let orden: Orden = await this.ordenRepository.findOne(filter);
       if (orden)
         return orden;
@@ -86,35 +87,27 @@ export class OrdenService {
     }
   };
 
-  async update(id: number, updateOrdenDto: UpdateOrdenDto) {
+  async update(id: number, updateOrdenDto: PartialUpdateOrdenDto) {
     try {
       let criterio: FindOneOptions = { where: { id: id } };
       let orden: Orden = await this.ordenRepository.findOne(criterio);
       if (!orden) {
-        throw new Error('No se encuentra la orden id: '+id);
-      }
+        throw new Error('No se encuentra la orden id: ' + id);
+      };
 
       let criterioCliente: FindOneOptions = { where: { id: updateOrdenDto.id_cliente } };
       let cliente: Cliente = await this.clienteRepository.findOne(criterioCliente);
       if (!cliente) {
-        throw new Error('No se encontró el cliente id: '+updateOrdenDto.id_cliente)
-      }
+        throw new Error('No se encontró el cliente id: ' + updateOrdenDto.id_cliente)
+      };
 
       let criterioEquipo: FindOneOptions = { where: { id: updateOrdenDto.id_equipo } };
       let equipo: Equipo = await this.equipoRepository.findOne(criterioEquipo);
       if (!equipo) {
-        throw new Error('No se encontró el equipo id: '+updateOrdenDto.id_equipo)
-      }
+        throw new Error('No se encontró el equipo id: ' + updateOrdenDto.id_equipo)
+      };
 
-      orden.setFechaIngreso(updateOrdenDto.fechaIngreso);
-      orden.setFechaEntregado(updateOrdenDto.fechaEntregado);
-      orden.setFechaEntregado(updateOrdenDto.fechaEntregado);
-      orden.setAccesorio(updateOrdenDto.accesorio);
-      orden.setFalla(updateOrdenDto.falla);
-      orden.setInforme(updateOrdenDto.informe);
-      orden.setImporte(updateOrdenDto.importe);
-      orden.setEstado(updateOrdenDto.estado);
-
+      Object.assign(orden, updateOrdenDto);
       orden.cliente = cliente;
       orden.equipo = equipo;
       orden = await this.ordenRepository.save(orden);
@@ -139,7 +132,7 @@ export class OrdenService {
       let criterio: FindOneOptions = { where: { id: id } };
       let orden: Orden = await this.ordenRepository.findOne(criterio);
       if (!orden) {
-        throw new Error('No se encuentra la orden id: '+id);
+        throw new Error('No se encuentra la orden id: ' + id);
       } else {
         estado = orden.getEstado();
         if (estado == 2) {
@@ -148,11 +141,11 @@ export class OrdenService {
           let estado = orden.getEstado()
 
           switch (estado) {
-          case 0:     /// Si la orden pasa de Pendiente a Terminada
+            case 0:     /// Si la orden pasa de Pendiente a Terminada
               orden.setEstado(1)
               orden.setFechaRevisado(this.fechaActual())
               break
-          case 1:    /// Si la orden pasa de Terminada a Entregada
+            case 1:    /// Si la orden pasa de Terminada a Entregada
               orden.setEstado(2)
               orden.setFechaEntregado(this.fechaActual())
               break

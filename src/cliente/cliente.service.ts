@@ -3,6 +3,7 @@ import { Repository, FindOneOptions } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClienteDto } from './dto/cliente.dto';
 import { Cliente } from './entities/cliente.entity';
+import { PartialUpdateClienteDto } from './dto/partial-update-cliente.dto';
 
 @Injectable()
 export class ClienteService {
@@ -62,7 +63,7 @@ export class ClienteService {
     }
   };
 
-  async update(id: number, updateClienteDto: ClienteDto) {
+  async update(id: number, updateClienteDto: PartialUpdateClienteDto) {
     try {
       let criterio: FindOneOptions = { where: { id: id } };
       let cliente: Cliente = await this.clienteRepository.findOne(criterio);
@@ -71,9 +72,7 @@ export class ClienteService {
         throw new Error('No se encuentra el cliente');
       }
 
-      cliente.setNombre(updateClienteDto.nombre);
-      cliente.setTelefono(updateClienteDto.telefono);
-      cliente.setDni(updateClienteDto.dni);
+      Object.assign(cliente, updateClienteDto);
 
       let updatedCliente = await this.clienteRepository.save(cliente);
 
