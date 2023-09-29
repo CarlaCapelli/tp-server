@@ -16,10 +16,14 @@ export class Cliente {
   @Column({ nullable: true, type: 'integer', width: 10})
   private dni?: number;
 
-  constructor(nombre: string, telefono: string, dni?:number) {
+  @Column({ nullable: true, type: 'varchar', width: 750})
+  private descripcion?: string;
+
+  constructor(nombre: string, telefono: string, dni?:number, descripcion?:string) {
     this.nombre = nombre;
     this.telefono = telefono;
     this.dni = dni;
+    this.descripcion = descripcion;
   }
 
   public getIdCliente(): number {
@@ -36,12 +40,20 @@ export class Cliente {
     return this.telefono;
   }
 
+  public getDescripcion():string{
+    return this.descripcion;
+  }
+
   public setTelefono(newTelefono:string):void {
     this.telefono = newTelefono
   }
 
   public setDni(newDNI:number):void{
     this.dni = newDNI
+  }
+
+  public setDescripcion(newDescripcion:string):void{
+    this.descripcion = newDescripcion;
   }
 
   public getDni():number{
