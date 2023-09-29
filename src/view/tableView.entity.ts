@@ -12,13 +12,13 @@ import { ViewEntity, ViewColumn, DataSource } from 'typeorm';
       .addSelect('orden.estado','estado')
       .addSelect('cliente.nombre', 'nombre')
       .addSelect('modelo.nombre', 'modelo')
-      .addSelect('marca.nombre', 'marca')
-      .addSelect('tipoEquipo.nombre', 'tipoEquipo')
+      .addSelect('marca.nombre', 'marca')/*
+      .addSelect('equipo.tipoEquipo.nombre', 'tipoEquipo')*/
       .from(Orden, 'orden')
       .innerJoin(Cliente, 'cliente', 'cliente.id = orden.id_cliente')
       .innerJoin(Equipo, 'equipo', 'equipo.id = orden.id_equipo')
-      .innerJoin('equipo.modelo', 'modelo')
-      .innerJoin('equipo.tipoEquipo', 'tipoEquipo')
+      .innerJoin('equipo.modelo', 'modelo')/*
+      .innerJoin('equipo.tipoEquipo', 'tipoEquipo')*/
       .innerJoin('modelo.marca', 'marca'),
    
 })

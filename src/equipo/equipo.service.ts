@@ -2,10 +2,11 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { EquipoDto } from './dto/equipo.dto';
 import { Equipo } from './entities/equipo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { And, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TipoEquipo } from 'src/tipo_equipo/entities/tipo_equipo.entity';
 import { Modelo } from 'src/modelo/entities/modelo.entity';
 import { CreateEquipoDto } from './dto/createEquipo.dto';
+import { SearchModelosDto } from './dto/searchModelos.dto';
 
 @Injectable()
 export class EquipoService {
@@ -33,7 +34,6 @@ export class EquipoService {
       if (modelo && tipoEquipo) {
         let nuevoEquipo = new Equipo(createEquipoDto.n_serie);
         nuevoEquipo.modelo = modelo;
-        nuevoEquipo.tipoEquipo = tipoEquipo;
 
         let equipo: Equipo = await this.equipoRepository.save(nuevoEquipo);
         if (!equipo) throw new Error('No se pudo agregar el equipo');
@@ -62,7 +62,7 @@ export class EquipoService {
     try {
       const criterio: FindOneOptions = {
         where: { id: id },
-        relations: ['modelo', 'modelo.marca', 'tipoEquipo'],
+        relations: ['modelo', 'modelo.marca', 'modelo.tipoEquipo'],
       };
       let equipo: Equipo = await this.equipoRepository.findOne(criterio);
       if (!equipo) throw new Error('No se encontro un equipo con ese ID');
@@ -116,5 +116,29 @@ export class EquipoService {
         HttpStatus.NOT_FOUND,
       );
     }
-  }
+  };
+
+  public async searchModelos(searchModelosDto:SearchModelosDto)/*: Promise<Modelo[]>*/ {
+    try {
+      // Busqueda de Marcas
+      const criterioModelo: FindManyOptions = { 
+        where: [{ 'tipoEquipo.id': searchModelosDto.id_tipo_equipo},
+        {'marca.id': searchModelosDto.id_marca}]};/// FALTA MEJORAR ESTA CONSULTA
+
+      let modelos: Modelo[] = await this.modeloRepository.find(criterioModelo);
+
+      if (!modelos[0]) throw new Error(`No se encontraron modelos` );
+      else {
+        return modelos;
+      }
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: error,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  };
 }

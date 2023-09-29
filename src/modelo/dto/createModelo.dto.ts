@@ -7,4 +7,7 @@ export class CreateModeloDto {
 
     @IsNotEmpty() @IsNumber()
     marcaID:number;
+
+    @IsNotEmpty() @IsNumber()
+    tipoEquipoID:number;
 }

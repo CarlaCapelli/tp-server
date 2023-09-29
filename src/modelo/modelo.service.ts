@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { Marca } from 'src/marca/entities/marca.entity';
 import { CreateModeloDto } from './dto/createModelo.dto';
+import { TipoEquipo } from 'src/tipo_equipo/entities/tipo_equipo.entity';
 
 
 @Injectable()
@@ -19,6 +20,8 @@ export class ModeloService {
     private readonly modeloRepository: Repository<Modelo>,
     @InjectRepository(Marca)
     private readonly marcaRepository: Repository<Marca>,
+    @InjectRepository(TipoEquipo)
+    private readonly tipoEquipoRepository: Repository<TipoEquipo>
   ) {}
 
   async create(createModeloDto: CreateModeloDto): Promise<Modelo> {
@@ -26,6 +29,12 @@ export class ModeloService {
       const criterioMarca: FindOneOptions = { where: { id: createModeloDto.marcaID } };
       let marca: Marca = await this.marcaRepository.findOne(criterioMarca);
       if (!marca) throw new Error('No se encontro una marca con ese ID');
+
+      const criterioTipoEquipo: FindOneOptions = { where: { id: createModeloDto.tipoEquipoID } };
+      let tipoEquipo: TipoEquipo = await this.tipoEquipoRepository.findOne(criterioTipoEquipo);
+      if (!tipoEquipo) throw new Error('No se encontro un tipo equipo con ese ID');
+
+
       const criterioModelo: FindOneOptions={where:{nombre: createModeloDto.nombre}}
       let modeloExistente=await  this.modeloRepository.findOne(criterioModelo)
         if (modeloExistente) {
@@ -39,6 +48,7 @@ export class ModeloService {
         } else {
           const modelo = new Modelo(createModeloDto.nombre);
           modelo.marca = marca;
+          modelo.tipoEquipo = tipoEquipo;
           return await this.modeloRepository.save(modelo);
         }
       
@@ -55,7 +65,7 @@ export class ModeloService {
 
   public async findAll(): Promise<Modelo[]> {
     const criterio: FindManyOptions = {
-      relations: ['marca'],
+      relations: ['marca', 'tipoEquipo'],
     };
     this.modelos = await this.modeloRepository.find(criterio);
     return this.modelos;
