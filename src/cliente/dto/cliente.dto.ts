@@ -11,4 +11,7 @@ export class ClienteDto {
     @IsNumber() @MaxLength(10)
     readonly dni: number;
 
+    @IsString() @MaxLength(750)
+    readonly descripcion:string;
+
 }
