@@ -1,4 +1,4 @@
-import { IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+/*import { IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class UpdateOrdenDto {
 
@@ -32,3 +32,4 @@ export class UpdateOrdenDto {
     @IsNotEmpty() @IsNumber()
     readonly id_equipo: number
 }
+*/
