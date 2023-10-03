@@ -73,7 +73,7 @@ export class OrdenService {
 
   async findOne(id: number) {
     try {
-      const filter: FindOneOptions = { where: { id: id }, relations: ['cliente', 'equipo', 'equipo.tipoEquipo', 'equipo.modelo.marca', 'equipo.modelo'] };
+      const filter: FindOneOptions = { where: { id: id }, relations: ['cliente', 'equipo', 'equipo.modelo.tipoEquipo', 'equipo.modelo.marca', 'equipo.modelo'] };//modifique
       let orden: Orden = await this.ordenRepository.findOne(filter);
       if (orden)
         return orden;
