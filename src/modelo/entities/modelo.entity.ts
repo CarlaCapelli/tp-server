@@ -13,10 +13,11 @@ export class Modelo {
   private nombre: string;
 
   @ManyToOne(() => TipoEquipo, (tipoEquipo) => tipoEquipo.modelos ,{ nullable: false })
-  @JoinColumn()
+  @JoinColumn({ name: 'id_tipo_equipo' })
   tipoEquipo: TipoEquipo;
 
-  @ManyToOne(() => Marca, (marca) => marca.modelos,{ nullable: false })                     
+  @ManyToOne(() => Marca, (marca) => marca.modelos,{ nullable: false })         
+  @JoinColumn({ name: 'id_marca' })            
   marca: Marca;
 
   @OneToMany(()=> Equipo,equipos=>equipos.modelo)

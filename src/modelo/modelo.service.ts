@@ -10,6 +10,7 @@ import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { Marca } from 'src/marca/entities/marca.entity';
 import { CreateModeloDto } from './dto/createModelo.dto';
 import { TipoEquipo } from 'src/tipo_equipo/entities/tipo_equipo.entity';
+import { SearchModelosDto } from './dto/searchModelos.dto';
 
 
 @Injectable()
@@ -22,7 +23,7 @@ export class ModeloService {
     private readonly marcaRepository: Repository<Marca>,
     @InjectRepository(TipoEquipo)
     private readonly tipoEquipoRepository: Repository<TipoEquipo>
-  ) {}
+  ) { }
 
   async create(createModeloDto: CreateModeloDto): Promise<Modelo> {
     try {
@@ -35,23 +36,23 @@ export class ModeloService {
       if (!tipoEquipo) throw new Error('No se encontro un tipo equipo con ese ID');
 
 
-      const criterioModelo: FindOneOptions={where:{nombre: createModeloDto.nombre}}
-      let modeloExistente=await  this.modeloRepository.findOne(criterioModelo)
-        if (modeloExistente) {
-          throw new HttpException(
-            {
-              status: HttpStatus.BAD_REQUEST,
-              error: 'Ya existe un modelo con este nombre.',
-            },
-            HttpStatus.BAD_REQUEST,
-          );
-        } else {
-          const modelo = new Modelo(createModeloDto.nombre);
-          modelo.marca = marca;
-          modelo.tipoEquipo = tipoEquipo;
-          return await this.modeloRepository.save(modelo);
-        }
-      
+      const criterioModelo: FindOneOptions = { where: { nombre: createModeloDto.nombre } }
+      let modeloExistente = await this.modeloRepository.findOne(criterioModelo)
+      if (modeloExistente) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'Ya existe un modelo con este nombre.',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      } else {
+        const modelo = new Modelo(createModeloDto.nombre);
+        modelo.marca = marca;
+        modelo.tipoEquipo = tipoEquipo;
+        return await this.modeloRepository.save(modelo);
+      }
+
     } catch (error) {
       throw new HttpException(
         {
@@ -129,4 +130,34 @@ export class ModeloService {
       );
     }
   }
+
+  public async searchModelos(searchModelosDto: SearchModelosDto): Promise<Modelo[]> {
+    try {
+      const idTipoEquipo = searchModelosDto.id_tipo_equipo
+      const idMarca = searchModelosDto.id_marca
+   
+      const filter: FindManyOptions = {
+        where: {
+          tipoEquipo: {id: idTipoEquipo},
+          marca: {id: idMarca},
+        },
+        relations: ['tipoEquipo', 'marca'],
+      }
+      
+      const modelos: Modelo[] = await this.modeloRepository.find(filter);
+
+      if (!modelos[0]) throw new Error(`No se encontraron modelos`);
+      else {
+        return modelos;
+      }
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: error,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  };
 }

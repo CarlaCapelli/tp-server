@@ -1,16 +1,7 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import {  Controller,  Get,  Post,  Body,  Patch,  Param,  Delete} from '@nestjs/common';
 import { EquipoService } from './equipo.service';
 import { EquipoDto } from './dto/equipo.dto';
 import { CreateEquipoDto } from './dto/createEquipo.dto';
-import { SearchModelosDto } from './dto/searchModelos.dto';
 
 @Controller('equipo')
 export class EquipoController {
@@ -24,11 +15,6 @@ export class EquipoController {
   @Get()
   findAll() {
     return this.equipoService.findAll();
-  }
-
-  @Get('/modelos')
-  findModelos(@Body() searchModelosDto: SearchModelosDto) {
-    return this.equipoService.searchModelos(searchModelosDto);
   }
 
   @Get(':id')
