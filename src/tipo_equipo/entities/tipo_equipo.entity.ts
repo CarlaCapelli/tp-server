@@ -1,4 +1,5 @@
 import { Equipo } from 'src/equipo/entities/equipo.entity';
+import { Modelo } from 'src/modelo/entities/modelo.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('tipoEquipo')
@@ -10,8 +11,8 @@ export class TipoEquipo {
   @Column({ unique: true, type: 'varchar', length: 50  })
   private nombre: string;
 
-  @OneToMany(() => Equipo, (equipos) => equipos.tipoEquipo)
-  equipos: Equipo[];
+  @OneToMany(() => Modelo, (modelos) => modelos.tipoEquipo)
+  modelos: Modelo[];
 
   constructor(nombre: string) {
     this.nombre = nombre;

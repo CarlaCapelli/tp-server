@@ -33,7 +33,6 @@ export class EquipoService {
       if (modelo && tipoEquipo) {
         let nuevoEquipo = new Equipo(createEquipoDto.n_serie);
         nuevoEquipo.modelo = modelo;
-        nuevoEquipo.tipoEquipo = tipoEquipo;
 
         let equipo: Equipo = await this.equipoRepository.save(nuevoEquipo);
         if (!equipo) throw new Error('No se pudo agregar el equipo');
@@ -62,7 +61,7 @@ export class EquipoService {
     try {
       const criterio: FindOneOptions = {
         where: { id: id },
-        relations: ['modelo', 'modelo.marca', 'tipoEquipo'],
+        relations: ['modelo', 'modelo.marca', 'modelo.tipoEquipo'],
       };
       let equipo: Equipo = await this.equipoRepository.findOne(criterio);
       if (!equipo) throw new Error('No se encontro un equipo con ese ID');
@@ -116,5 +115,5 @@ export class EquipoService {
         HttpStatus.NOT_FOUND,
       );
     }
-  }
+  };
 }

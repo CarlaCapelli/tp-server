@@ -15,9 +15,6 @@ export class Equipo {
   @JoinColumn()
   modelo: Modelo;
 
-  @ManyToOne(() => TipoEquipo, (tipoEquipo) => tipoEquipo.equipos ,{ nullable: false })
-  @JoinColumn()
-  tipoEquipo: TipoEquipo;
   
   @OneToMany(()=>Orden, orden => orden.equipo)
   orden:Orden;

@@ -14,7 +14,7 @@ export class TableViewService {
   async findAll(): Promise<TableView[]> {
     return this.ordenesRepository.find();
   }
-
+  
   async findByStatus(estado: number): Promise<TableView[]> {
     try {
       this.ordenes = await this.ordenesRepository.find({
