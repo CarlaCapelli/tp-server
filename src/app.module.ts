@@ -16,13 +16,13 @@ import { TableViewModule } from './view/tableView.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: 'bwcundda0dgl9otj5tky-mysql.services.clever-cloud.com',
       port: 3306,
-      username: 'root',
-      password: '12345678', // poner el password
-      database: 'soat',
-      entities: [__dirname + '/../dist/**/entities/*.entity.{js,ts}'],
-      synchronize: false,
+      username: 'ujhs0fftir2vghah',
+      password: 'Wl57GFgpqbLquINI06fr', 
+      database: 'bwcundda0dgl9otj5tky',
+      entities: [__dirname + '/../dist/**/entities/*.entity.{js,ts}', __dirname + '/../dist/**/*.entity.{js,ts}'],
+      synchronize: true,
     }),
     ClienteModule,
     EquipoModule,
