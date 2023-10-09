@@ -26,11 +26,7 @@ export class EquipoService {
     try {
       let criterioModelo: FindOneOptions = { where: { id: createEquipoDto.modeloID } };
       let modelo = await this.modeloRepository.findOne(criterioModelo);
-      let criterioTipoEquipo: FindOneOptions = { where: { id: createEquipoDto.tipoEquipoID } };
-      let tipoEquipo = await this.tipoEquipoRepository.findOne(
-        criterioTipoEquipo,
-      );
-      if (modelo && tipoEquipo) {
+      if (modelo) {
         let nuevoEquipo = new Equipo(createEquipoDto.n_serie);
         nuevoEquipo.modelo = modelo;
 
@@ -51,7 +47,7 @@ export class EquipoService {
 
   async findAll(): Promise<Equipo[]> {
     const criterio: FindManyOptions = {
-      relations: ['modelo', 'modelo.marca', 'tipoEquipo'],
+      relations: ['modelo', 'modelo.marca', 'modelo.tipoEquipo'],
     };
     this.equipos = await this.equipoRepository.find(criterio);
     return this.equipos;
