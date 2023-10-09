@@ -19,14 +19,19 @@ export class EquipoService {
     private readonly tipoEquipoRepository: Repository<TipoEquipo>,
   ) {}
   
-  async create(
-    createEquipoDto: CreateEquipoDto,
-   
-  ): Promise<Equipo> {
+  async create(createEquipoDto: CreateEquipoDto): Promise<Equipo> {
     try {
       let criterioModelo: FindOneOptions = { where: { id: createEquipoDto.modeloID } };
       let modelo = await this.modeloRepository.findOne(criterioModelo);
       if (modelo) {
+        /// Si encuentra un equipo con el mismo numero de serie
+        console.log(createEquipoDto.n_serie);
+        let criterioNSerie: FindOneOptions = { where: { modeloId: createEquipoDto.modeloID, n_serie:createEquipoDto.n_serie } };
+        let nSerieSearch = await this.equipoRepository.findOne(criterioNSerie)
+        if (nSerieSearch){
+          return nSerieSearch
+        }
+
         let nuevoEquipo = new Equipo(createEquipoDto.n_serie);
         nuevoEquipo.modelo = modelo;
 
