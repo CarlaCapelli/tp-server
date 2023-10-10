@@ -24,11 +24,12 @@ export class EquipoService {
       let criterioModelo: FindOneOptions = { where: { id: createEquipoDto.modeloID } };
       let modelo = await this.modeloRepository.findOne(criterioModelo);
       if (modelo) {
-        /// Si encuentra un equipo con el mismo numero de serie
+        /// Si encuentra un equipo con el mismo numero de serie elije ese
         console.log(createEquipoDto.n_serie);
-        let criterioNSerie: FindOneOptions = { where: { modeloId: createEquipoDto.modeloID, n_serie:createEquipoDto.n_serie } };
+        let criterioNSerie: FindOneOptions = { where: { modelo: createEquipoDto.modeloID, n_serie:createEquipoDto.n_serie } };
         let nSerieSearch = await this.equipoRepository.findOne(criterioNSerie)
         if (nSerieSearch){
+          nSerieSearch.modelo = modelo
           return nSerieSearch
         }
 
