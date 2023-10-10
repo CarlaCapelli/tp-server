@@ -22,7 +22,6 @@ export class OrdenService {
   ) { }
 
   async create(ordenDto: CreateOrdenDto): Promise<Orden> {
-
     try {
       let criterioCliente: FindOneOptions = { where: { id: ordenDto.id_cliente } };
       let cliente: Cliente = await this.clienteRepository.findOne(criterioCliente);
@@ -124,7 +123,7 @@ export class OrdenService {
     const currentDate = new Date();
     const formattedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
     return formattedDate
-  }
+  };
 
   async changeEstado(id: number) {
     try {
@@ -150,8 +149,12 @@ export class OrdenService {
               orden.setFechaEntregado(this.fechaActual())
               break
           }
-          orden = await this.ordenRepository.save(orden);
-          return orden
+          let ordenSave = await this.ordenRepository.save(orden);
+          if (!ordenSave) {
+            throw new Error("no se pudo cambiar el estado de la orden")
+          } else {
+            return ordenSave
+          }
         }
       };
     } catch (error) {
@@ -168,10 +171,13 @@ export class OrdenService {
       if (!orden) {
         throw new Error(`No se pudo encontrar id: ` + id)
       }
-      else {
-        await this.ordenRepository.delete(id)
+      orden.setEstado(4)
+      let deleteStatus = await this.ordenRepository.save(orden)
+      if (!deleteStatus) {
+        throw new Error('No se pudo eliminar la orden')
+      } else {
+        return true
       }
-      return true
     }
     catch (error) {
       throw new HttpException(
