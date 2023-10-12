@@ -8,14 +8,26 @@ export class Orden {
   @PrimaryGeneratedColumn()
   private id: number;
 
-  @Column({ type: 'date', nullable: false })
+  @Column({ nullable: false, type: 'date'})
   private fechaIngreso: Date;
 
   @Column({ nullable: true, type: 'date'})
-  private fechaRevisado: Date;
+  private fechaDiagnosticada: Date;
+
+  @Column({ nullable: true, type: 'date'})
+  private fechaPresupuestada: Date;
+
+  @Column({ nullable: true, type: 'date'})
+  private fechaPendiente: Date;
+
+  @Column({ nullable: true, type: 'date'})
+  private fechaTerminada: Date;
 
   @Column({ nullable: true, type: 'date' })
-  private fechaEntregado: Date;
+  private fechaEntregada: Date;
+
+  @Column({ nullable: true, type: 'date' })
+  private fechaEliminada: Date;
 
   @Column({ nullable: true, type: 'varchar', length: 250 })
   private accesorio: string;
@@ -36,38 +48,14 @@ export class Orden {
     this.falla = falla;
     this.accesorio = accesorio;
     this.fechaIngreso = fechaIngreso
-  }
+  };
 
   public getIdOrden(): number {
     return this.id;
   };
 
-  public getFechaIngreso(): Date {
-    return this.fechaIngreso;
-  };
-
-  public getFechaRevisado(): Date {
-    return this.fechaRevisado;
-  };
-
   public setFalla(falla:string) {
     this.falla = falla
-  };
-  
-  public setFechaIngreso(fechaIngreso: Date): void {
-    this.fechaIngreso = fechaIngreso;
-  };
-
-  public setFechaRevisado(fechaRevisado: Date): void {
-    this.fechaRevisado = fechaRevisado;
-  };
-
-  public getFechaEntregado(): Date {
-    return this.fechaEntregado;
-  };
-
-  public setFechaEntregado(fechaEntregado: Date): void {
-    this.fechaEntregado = fechaEntregado;
   };
 
   public getAccesorio():string{
@@ -104,7 +92,65 @@ export class Orden {
 
   public setEstado(newEstado:number): void {
     this.estado = newEstado;
-  }
+  };
+
+  // Fechas estados //
+
+  public getFechaIngreso(): Date {
+    return this.fechaIngreso;
+  };
+
+  public setFechaIngreso(fechaIngreso: Date): void {
+    this.fechaIngreso = fechaIngreso;
+  };
+
+  public getFechaDiagnosticada(): Date{
+    return this.fechaDiagnosticada;
+  };
+
+  public setFechaDiagnosticada(fecha: Date): void {
+    this.fechaDiagnosticada = fecha;
+  };
+
+  public getFechaPresupuestada(): Date{
+    return this.fechaPresupuestada;
+  };
+
+  public setFechaPresupuestada(fecha: Date): void {
+    this.fechaPresupuestada = fecha;
+  };
+
+  public getFechaPendiente(): Date{
+    return this.fechaPendiente;
+  };
+
+  public setFechaPendiente(fecha: Date): void {
+    this.fechaPendiente = fecha;
+  };
+
+  public getFechaTerminada():Date{
+    return this.fechaTerminada;
+  };
+  
+  public setFechaTerminada(fecha: Date): void {
+    this.fechaTerminada = fecha;
+  };
+
+  public getFechaEntregada():Date{
+    return this.fechaEntregada;
+  };
+
+  public setFechaEntregada(fecha: Date): void {
+    this.fechaEntregada = fecha;
+  };
+
+  public getFechaEliminada():Date{
+    return this.fechaEliminada;
+  };
+
+  public setFechaEliminada(fecha: Date): void {
+    this.fechaEliminada = fecha;
+  };
 
   @ManyToOne(()=> Cliente, cliente => cliente.orden)
   @JoinColumn({name:'id_cliente'})

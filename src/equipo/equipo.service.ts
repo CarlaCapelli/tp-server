@@ -3,7 +3,6 @@ import { EquipoDto } from './dto/equipo.dto';
 import { Equipo } from './entities/equipo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { TipoEquipo } from 'src/tipo_equipo/entities/tipo_equipo.entity';
 import { Modelo } from 'src/modelo/entities/modelo.entity';
 import { CreateEquipoDto } from './dto/createEquipo.dto';
 
@@ -15,10 +14,8 @@ export class EquipoService {
     private readonly equipoRepository: Repository<Equipo>,
     @InjectRepository(Modelo)
     private readonly modeloRepository: Repository<Modelo>,
-    @InjectRepository(TipoEquipo)
-    private readonly tipoEquipoRepository: Repository<TipoEquipo>,
-  ) {}
-  
+  ) { }
+
   async create(createEquipoDto: CreateEquipoDto): Promise<Equipo> {
     try {
       let criterioModelo: FindOneOptions = { where: { id: createEquipoDto.modeloID } };
@@ -26,13 +23,14 @@ export class EquipoService {
       if (modelo) {
         /// Si encuentra un equipo con el mismo numero de serie elije ese
         console.log(createEquipoDto.n_serie);
-        let criterioNSerie: FindOneOptions = { where: { modelo: createEquipoDto.modeloID, n_serie:createEquipoDto.n_serie } };
+        let criterioNSerie: FindOneOptions = { where: { modelo: createEquipoDto.modeloID, n_serie: createEquipoDto.n_serie } };
         let nSerieSearch = await this.equipoRepository.findOne(criterioNSerie)
-        if (nSerieSearch){
+        if (nSerieSearch) {
           nSerieSearch.modelo = modelo
           return nSerieSearch
         }
 
+        /// Si no se encuentra con el mismo numero de serie, lo crea
         let nuevoEquipo = new Equipo(createEquipoDto.n_serie);
         nuevoEquipo.modelo = modelo;
 
@@ -49,7 +47,7 @@ export class EquipoService {
         HttpStatus.NOT_FOUND,
       );
     }
-  }
+  };
 
   async findAll(): Promise<Equipo[]> {
     const criterio: FindManyOptions = {
@@ -57,7 +55,7 @@ export class EquipoService {
     };
     this.equipos = await this.equipoRepository.find(criterio);
     return this.equipos;
-  }
+  };
 
   public async findOne(id: number): Promise<Equipo> {
     try {
@@ -77,16 +75,21 @@ export class EquipoService {
         HttpStatus.NOT_FOUND,
       );
     }
-  }
+  };
 
   async update(id: number, equipoDto: EquipoDto): Promise<Equipo> {
     try {
       const criterio: FindOneOptions = { where: { id: id } };
       let equipo: Equipo = await this.equipoRepository.findOne(criterio);
-      if (!equipo)  throw new Error('No se pudo actualizar');
-       else  { equipo.setNSerie(equipoDto.n_serie);
-      equipo = await this.equipoRepository.save(equipo);
-      return equipo;
+      if (!equipo) throw new Error('No se encontro equipo');
+      else {
+        equipo.setNSerie(equipoDto.n_serie);
+        let equipoSave = await this.equipoRepository.save(equipo);
+        if (!equipoSave) {
+          throw new Error("No se pudo actualizar en base de datos")
+        } else {
+          return equipo;
+        }
       }
     } catch (error) {
       throw new HttpException(
@@ -97,22 +100,26 @@ export class EquipoService {
         HttpStatus.NOT_FOUND,
       );
     }
-  }
+  };
 
   async remove(id: number): Promise<boolean> {
     try {
       const criterio: FindOneOptions = { where: { id: id } };
       let equipo: Equipo = await this.equipoRepository.findOne(criterio);
-      if (!equipo) throw new Error('No se pudo eliminar');
+      if (!equipo) throw new Error('No se encontro equipo a eliminar');
       else {
-        await this.equipoRepository.delete(id);
-        return true;
+        let deleteStatus = await this.equipoRepository.delete(id);
+        if (!deleteStatus) {
+          throw new Error("No se borro equipo en base de datos")
+        } else {
+          return true;
+        }
       }
     } catch (error) {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          error: 'Error al eliminar ' + error,
+          error: 'Error: ' + error,
         },
         HttpStatus.NOT_FOUND,
       );
