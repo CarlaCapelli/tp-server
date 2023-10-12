@@ -1,12 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository, FindOneOptions, FindManyOptions } from 'typeorm';
-/*import { UpdateOrdenDto } from './dto/update-orden.dto';*/
 import { InjectRepository } from '@nestjs/typeorm';
 import { Orden } from './entities/orden.entity';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
 import { CreateOrdenDto } from './dto/create-orden.dto';
 import { Equipo } from 'src/equipo/entities/equipo.entity';
-import { getManager } from 'typeorm';
 import { PartialUpdateOrdenDto } from './dto/partial-update-orden.dto';
 
 @Injectable()
@@ -134,20 +132,32 @@ export class OrdenService {
         throw new Error('No se encuentra la orden id: ' + id);
       } else {
         estado = orden.getEstado();
-        if (estado == 2) {
+        if (estado == 5) {
           throw new Error(`Orden ${id} ya está en estado entregada`)
         } else {
           let estado = orden.getEstado()
 
           switch (estado) {
-            case 0:     /// Si la orden pasa de Pendiente a Terminada
+            case 0:     /// Si la esta en Ingresadas pasa a Diagnosticadas
               orden.setEstado(1)
-              orden.setFechaRevisado(this.fechaActual())
-              break
-            case 1:    /// Si la orden pasa de Terminada a Entregada
+              orden.setFechaDiagnosticada(this.fechaActual())
+              break;
+            case 1:    /// Si la esta en Diagnosticadas pasa a Presupuestada
               orden.setEstado(2)
-              orden.setFechaEntregado(this.fechaActual())
-              break
+              orden.setFechaPresupuestada(this.fechaActual())
+              break;
+            case 2:    /// Si la esta en Presupuestadas pasa a Pendientes
+              orden.setEstado(3)
+              orden.setFechaPendiente(this.fechaActual())
+              break;
+            case 3:    /// Si la esta en Pendientes pasa a Terminadas
+              orden.setEstado(4)
+              orden.setFechaTerminada(this.fechaActual())
+              break;
+            case 4:    /// Si la esta en Terminadas pasa a Entregadas
+              orden.setEstado(5)
+              orden.setFechaEntregada(this.fechaActual())
+              break;
           }
           let ordenSave = await this.ordenRepository.save(orden);
           if (!ordenSave) {
@@ -164,6 +174,35 @@ export class OrdenService {
     }
   };
 
+  async presupuestoNA(idOrden: number) { // Presupuesto no aprobado
+    try {
+      let criterio: FindOneOptions = { where: { id: idOrden } };
+      let orden: Orden = await this.ordenRepository.findOne(criterio);
+      if (!orden) {
+        throw new Error('No se encuentra la orden id: ' + idOrden);
+      } else {
+        let estado = orden.getEstado();
+        if (estado != 2) {
+          throw new Error(`Orden ${idOrden} no está presupuestada`)
+        } else {
+          orden.setEstado(4)
+          orden.setFechaTerminada(this.fechaActual())
+          let ordenSave = await this.ordenRepository.save(orden);
+          if (!ordenSave) {
+            throw new Error("no se pudo cambiar el estado de la orden")
+          } else {
+            return ordenSave
+          }
+        }
+      };
+    } catch (error) {
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: `${error}` },
+        HttpStatus.NOT_FOUND)
+    }
+  };
+
+
   public async remove(id: number): Promise<Boolean> {
     try {
       const criterio: FindOneOptions = { where: { id: id } }
@@ -171,7 +210,7 @@ export class OrdenService {
       if (!orden) {
         throw new Error(`No se pudo encontrar id: ` + id)
       }
-      orden.setEstado(4)
+      orden.setEstado(6)
       let deleteStatus = await this.ordenRepository.save(orden)
       if (!deleteStatus) {
         throw new Error('No se pudo eliminar la orden')
