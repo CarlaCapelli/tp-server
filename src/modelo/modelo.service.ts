@@ -146,7 +146,8 @@ export class ModeloService {
       
       const modelos: Modelo[] = await this.modeloRepository.find(filter);
 
-      if (!modelos[0]) throw new Error(`No se encontraron modelos`);
+      if (!modelos[0]) //throw new Error(`No se encontraron modelos`);
+      return modelos
       else {
         return modelos;
       }
