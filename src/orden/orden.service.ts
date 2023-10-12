@@ -148,6 +148,7 @@ export class OrdenService {
               break;
             case 2:    /// Si la esta en Presupuestadas pasa a Pendientes
               orden.setEstado(3)
+              orden.setPresupuestoAprobado(true);
               orden.setFechaPendiente(this.fechaActual())
               break;
             case 3:    /// Si la esta en Pendientes pasa a Terminadas
@@ -185,7 +186,8 @@ export class OrdenService {
         if (estado != 2) {
           throw new Error(`Orden ${idOrden} no está presupuestada`)
         } else {
-          orden.setEstado(4)
+          orden.setEstado(4);
+          orden.setPresupuestoAprobado(false);
           orden.setFechaTerminada(this.fechaActual())
           let ordenSave = await this.ordenRepository.save(orden);
           if (!ordenSave) {
