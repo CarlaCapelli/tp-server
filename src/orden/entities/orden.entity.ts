@@ -38,6 +38,12 @@ export class Orden {
   @Column({ nullable: true, type: 'varchar', length: 600 })
   private informe: string;
 
+  @Column({ nullable: true, type: 'varchar', length: 600 })
+  private presupuesto: string;
+
+  @Column({ default: () => false, type: 'boolean'})
+  private presupuestoAprobado: boolean;
+
   @Column({ nullable: true, type: 'decimal', precision: 12, scale: 2})
   private importe: number;
 
@@ -76,6 +82,23 @@ export class Orden {
 
   public setInforme(newInforme:string):void {
     this.informe = newInforme;
+  };
+
+  public getPresupuesto(): string{
+    return this.presupuesto
+  };
+
+  public setPresupuesto(newPresupuesto:string):void {
+    this.presupuesto = newPresupuesto;
+  };
+
+
+  public getPresupuestoAprobado(): boolean{
+    return this.presupuestoAprobado
+  };
+
+  public setPresupuestoAprobado(estado:boolean):void {
+    this.presupuestoAprobado = estado;
   };
 
   public getImporte():number {
