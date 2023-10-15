@@ -20,23 +20,27 @@ export class EquipoService {
     try {
       let criterioModelo: FindOneOptions = { where: { id: createEquipoDto.modeloID } };
       let modelo = await this.modeloRepository.findOne(criterioModelo);
-      if (modelo) {
-        /// Si encuentra un equipo con el mismo numero de serie elije ese
-        console.log(createEquipoDto.n_serie);
-        let criterioNSerie: FindOneOptions = { where: { modelo: createEquipoDto.modeloID, n_serie: createEquipoDto.n_serie } };
-        let nSerieSearch = await this.equipoRepository.findOne(criterioNSerie)
-        if (nSerieSearch) {
-          nSerieSearch.modelo = modelo
-          return nSerieSearch
-        }
+      if (!modelo) {
+        throw new Error('No se pudo encontrar el modelo para el equipo')
+      } else { // Si encuentra el modelo
+        /// Si encuentra un equipo con el mismo modelo y numero de serie elije ese
+        if (createEquipoDto.n_serie != null) { // Si createEquipoDTO tiene nSerie nulo, omite la busqueda
+          let criterioNSerie: FindOneOptions = { where: { modelo:{id: createEquipoDto.modeloID}, n_serie: createEquipoDto.n_serie } };
+          let equipoSearch = await this.equipoRepository.findOne(criterioNSerie)
 
-        /// Si no se encuentra con el mismo numero de serie, lo crea
+          if (equipoSearch) { // Si logra encontrarlo
+            return equipoSearch
+          }
+        }
+        /// Si no se encuentra un equipo con el mismo numero de serie y modelo, lo crea
         let nuevoEquipo = new Equipo(createEquipoDto.n_serie);
         nuevoEquipo.modelo = modelo;
 
-        let equipo: Equipo = await this.equipoRepository.save(nuevoEquipo);
-        if (!equipo) throw new Error('No se pudo agregar el equipo');
-        else return equipo;
+        let equipoSaved: Equipo = await this.equipoRepository.save(nuevoEquipo);
+        if (!equipoSaved) {
+          throw new Error('No se pudo guardar el equipo');
+        }
+        return equipoSaved
       }
     } catch (error) {
       throw new HttpException(
