@@ -74,7 +74,7 @@ export class ModeloService {
 
   public async findOne(id: number): Promise<Modelo> {
     try {
-      const criterio: FindOneOptions = { where: { id: id } };
+      const criterio: FindOneOptions = { where: { id: id } , relations: ['marca', 'tipoEquipo']};
       let modelo: Modelo = await this.modeloRepository.findOne(criterio);
       if (modelo) return modelo;
       else throw new Error('No se encontro un modelo con ese ID');
