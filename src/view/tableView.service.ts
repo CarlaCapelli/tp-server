@@ -9,16 +9,17 @@ export class TableViewService {
   constructor(
     @InjectRepository(TableView)
     private ordenesRepository: Repository<TableView>,
-  ) {}
+  ) { }
 
   async findAll(): Promise<TableView[]> {
     return this.ordenesRepository.find();
   }
-  
+
   async findByStatus(estado: number): Promise<TableView[]> {
     try {
       this.ordenes = await this.ordenesRepository.find({
-        where: { estado }, order: null ,
+        where: { estado }, 
+        order: null
       });
       return this.ordenes;
     } catch (error) {
@@ -34,14 +35,15 @@ export class TableViewService {
     try {
       if (filtroPor === 'cliente') {
         this.ordenes = await this.ordenesRepository.find({
-          where: { estado: estado, nombre: Like(`%${filter}%`)}, order: null 
+          where: { estado: estado, nombre: Like(`%${filter}%`) }, 
+          order: null
         });
       } else if (filtroPor === 'equipo') {
         this.ordenes = await this.ordenesRepository.find({
           where: [
             { estado: estado, modelo: Like(`%${filter}%`) },
-            { estado: estado, marca: Like(`%${filter}%`) }, 
-          ],order: null 
+            { estado: estado, marca: Like(`%${filter}%`) }], 
+            order: null
         });
       }
 
