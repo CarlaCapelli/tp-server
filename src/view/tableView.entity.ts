@@ -20,7 +20,8 @@ import { ViewEntity, ViewColumn, DataSource } from 'typeorm';
       .innerJoin(Equipo, 'equipo', 'equipo.id = orden.id_equipo')
       .innerJoin('equipo.modelo', 'modelo')
       .innerJoin('modelo.marca', 'marca')
-      .innerJoin('modelo.tipoEquipo', 'tipoEquipo'),
+      .innerJoin('modelo.tipoEquipo', 'tipoEquipo')
+      .orderBy('orden.id', 'ASC'),
 })
 export class TableView {
   @ViewColumn()
