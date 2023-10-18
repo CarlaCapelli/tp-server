@@ -18,7 +18,7 @@ export class TableViewService {
   async findByStatus(estado: number): Promise<TableView[]> {
     try {
       this.ordenes = await this.ordenesRepository.find({
-        where: { estado },
+        where: { estado }, order: null ,
       });
       return this.ordenes;
     } catch (error) {
@@ -34,14 +34,14 @@ export class TableViewService {
     try {
       if (filtroPor === 'cliente') {
         this.ordenes = await this.ordenesRepository.find({
-          where: { estado: estado, nombre: Like(`%${filter}%`) },
+          where: { estado: estado, nombre: Like(`%${filter}%`)}, order: null 
         });
       } else if (filtroPor === 'equipo') {
         this.ordenes = await this.ordenesRepository.find({
           where: [
             { estado: estado, modelo: Like(`%${filter}%`) },
-            { estado: estado, marca: Like(`%${filter}%`) },
-          ],
+            { estado: estado, marca: Like(`%${filter}%`) }, 
+          ],order: null 
         });
       }
 
