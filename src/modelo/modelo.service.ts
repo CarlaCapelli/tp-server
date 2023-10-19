@@ -37,8 +37,8 @@ export class ModeloService {
 
 
       const criterioModelo: FindOneOptions = { where: { nombre: createModeloDto.nombre, 
-        id_marca:createModeloDto.marcaID, 
-        id_tipo_equipo: createModeloDto.tipoEquipoID }}
+        marca:{id : createModeloDto.marcaID}, 
+        tipoEquipo : {id: createModeloDto.tipoEquipoID}}}
 
       let modeloExistente = await this.modeloRepository.findOne(criterioModelo)
       if (modeloExistente) { return modeloExistente } // Habria que agregar una respuesta para avisar que esta repetido el nombre
