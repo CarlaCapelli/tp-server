@@ -36,17 +36,13 @@ export class ModeloService {
       if (!tipoEquipo) throw new Error('No se encontro un tipo equipo con ese ID');
 
 
-      const criterioModelo: FindOneOptions = { where: { nombre: createModeloDto.nombre } }
+      const criterioModelo: FindOneOptions = { where: { nombre: createModeloDto.nombre, 
+        id_marca:createModeloDto.marcaID, 
+        id_tipo_equipo: createModeloDto.tipoEquipoID }}
+
       let modeloExistente = await this.modeloRepository.findOne(criterioModelo)
-      if (modeloExistente) {
-        throw new HttpException(
-          {
-            status: HttpStatus.BAD_REQUEST,
-            error: 'Ya existe un modelo con este nombre.',
-          },
-          HttpStatus.BAD_REQUEST,
-        );
-      } else {
+      if (modeloExistente) { return modeloExistente } // Habria que agregar una respuesta para avisar que esta repetido el nombre
+      else {
         const modelo = new Modelo(createModeloDto.nombre);
         modelo.marca = marca;
         modelo.tipoEquipo = tipoEquipo;
