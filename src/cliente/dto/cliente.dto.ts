@@ -9,9 +9,9 @@ export class ClienteDto {
     readonly telefono:string;
 
     @IsNumber() @MaxLength(10)
-    readonly dni: number;
+    readonly dni?: number;
 
     @IsString() @MaxLength(750)
-    readonly descripcion:string;
+    readonly descripcion?:string;
 
 }
