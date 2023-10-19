@@ -37,7 +37,7 @@ export class ModeloService {
 
 
       const criterioModelo: FindOneOptions = { where: { nombre: createModeloDto.nombre, 
-        marca:{id : createModeloDto.marcaID}, 
+        marca: {id : createModeloDto.marcaID}, 
         tipoEquipo : {id: createModeloDto.tipoEquipoID}}}
 
       let modeloExistente = await this.modeloRepository.findOne(criterioModelo)
