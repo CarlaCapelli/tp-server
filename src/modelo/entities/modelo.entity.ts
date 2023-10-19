@@ -9,7 +9,7 @@ export class Modelo {
   @PrimaryGeneratedColumn()
   private id: number;
 
-  @Column({ unique: true, type: 'varchar', length: 100})
+  @Column({ type: 'varchar', length: 100})
   private nombre: string;
 
   @ManyToOne(() => TipoEquipo, (tipoEquipo) => tipoEquipo.modelos ,{ nullable: false })
