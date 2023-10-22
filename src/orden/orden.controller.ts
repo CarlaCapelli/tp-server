@@ -37,6 +37,11 @@ export class OrdenController {
     return this.ordenService.presupuestoNA(+id);
   };
 
+  @Patch(':id/presupuestarA')
+  presupuestoAgain(@Param('id') id: string) {
+    return this.ordenService.changeToPresupuestada(+id);
+  };
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.ordenService.remove(+id);

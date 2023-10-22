@@ -204,6 +204,34 @@ export class OrdenService {
     }
   };
 
+  public async changeToPresupuestada(idOrden: number): Promise<Orden> {
+    try {
+      let orden = await this.findOne(idOrden)
+      if (!orden) {
+        throw new Error('No se encontro orden para volver a presupuestar')
+      }
+      let estado: number = orden.getEstado()
+
+      if (estado == 3 || estado == 4) {
+        orden.setEstado(2);
+        orden.setPresupuestoAprobado(false);
+        orden.setFechaPendiente(null)
+        orden.setFechaTerminada(null)
+        let ordenSave = await this.ordenRepository.save(orden);
+        if (!ordenSave) {
+          throw new Error("No se pudo cambiar el estado de la orden")
+        } else {
+          return ordenSave
+        }
+      } else {
+        throw new Error ("Orden no tiene estado para ser presupuestada nuevamente")
+      }
+    } catch (error) {
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: `${error}` },
+        HttpStatus.NOT_FOUND)
+    }
+  }
 
   public async remove(id: number): Promise<Boolean> {
     try {
