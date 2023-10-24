@@ -1,17 +1,17 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class PartialUpdateOrdenDto {
 
-    @IsString()
+    @IsOptional() @IsString()
     readonly accesorio?: string;
 
-    @IsString()
+    @IsOptional() @IsString()
     readonly falla?: string;
     
-    @IsString()
+    @IsOptional() @IsString()
     readonly informe?: string;
 
-    @IsNumber()
+    @IsOptional() @IsNumber()
     readonly importe?: number;
 
     @IsNotEmpty() @IsNumber()

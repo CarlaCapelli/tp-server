@@ -1,6 +1,6 @@
-import { IsNotEmpty, IsString, MaxLength } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from "class-validator";
 
 export class EquipoDto {
-  @IsNotEmpty() @IsString() @MaxLength(100)
+  @IsOptional() @IsNotEmpty() @IsString() @MaxLength(100)
   readonly n_serie?: string;
 }

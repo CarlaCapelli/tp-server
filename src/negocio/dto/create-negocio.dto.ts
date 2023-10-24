@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateNegocioDto {
 
@@ -20,16 +20,16 @@ export class CreateNegocioDto {
     @IsNotEmpty() @IsEmail() @MaxLength(320)
     readonly email: string;
 
-    @IsNotEmpty() @IsString() @MaxLength(30)
+    @IsOptional() @IsString() @MaxLength(30) 
     readonly telefono?: string;
 
-    @IsNotEmpty() @IsString() @MaxLength(30)
+    @IsOptional() @IsString() @MaxLength(30)
     readonly celular?: string;
 
-    @IsNotEmpty() @IsString() @MaxLength(13)
+    @IsOptional() @IsString() @MaxLength(13)
     readonly cuit?: string;
 
-    @IsNotEmpty() @IsString() @MaxLength(180)
+    @IsOptional() @IsString() @MaxLength(180)
     readonly razonSocial?: string;
 
 }
