@@ -15,18 +15,19 @@ export class NegocioService {
 
     async create(negocioDto: CreateNegocioDto): Promise<Negocio> {
         try {
-            let created : FindOneOptions = {where: {id:1}}
+            let criterio : FindOneOptions = {where: {id:1}}
+            let negocioCreado : Negocio = await this.negocioRepository.findOne(criterio)
 
-            if (created){
+            if (negocioCreado){
                 throw new Error ('Ya hay creado un negocio')
             }
 
             let newNegocio = new Negocio(
                 negocioDto.nombre, negocioDto.pais, 
                 negocioDto.provincia, negocioDto.ciudad,
-                negocioDto.direccion, negocioDto.celular, 
-                negocioDto.telefono, negocioDto.cuit, 
-                negocioDto.razonSocial);
+                negocioDto.direccion, negocioDto.email,
+                negocioDto.celular, negocioDto.telefono, 
+                negocioDto.cuit, negocioDto.razonSocial);
 
             let negocio = await this.negocioRepository.save(newNegocio);
 

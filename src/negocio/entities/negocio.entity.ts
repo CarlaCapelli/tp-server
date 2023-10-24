@@ -9,13 +9,13 @@ export class Negocio {
     @Column({ type: 'varchar', length: 200 })
     private nombre: string;
 
-    @Column({ type: 'varchar', length: 100})
+    @Column({ type: 'varchar', length: 100 })
     private pais: string;
 
-    @Column({ type: 'varchar', length: 100})
+    @Column({ type: 'varchar', length: 100 })
     private provincia: string;
 
-    @Column({ type: 'varchar', length: 100})
+    @Column({ type: 'varchar', length: 100 })
     private ciudad: string;
 
     @Column({ type: 'varchar', length: 300 })
@@ -24,24 +24,34 @@ export class Negocio {
     @Column({ type: 'varchar', length: 320 })
     private email: string;
 
-    @Column({ type: 'varchar', length: 30})
+    @Column({ type: 'varchar', length: 30, default: null })
     private telefono: string;
 
-    @Column({ type: 'varchar', length: 30})
+    @Column({ type: 'varchar', length: 30, default: null })
     private celular: string;
 
-    @Column({ type: 'varchar', length: 13})
+    @Column({ type: 'varchar', length: 13, default: null })
     private cuit: string;
 
-    @Column({ type: 'varchar', length: 180})
+    @Column({ type: 'varchar', length: 180, default: null })
     private razonSocial: string;
 
-    constructor(nombre: string, pais:string, provincia:string, ciudad:string, direccion:string, celular?:string, telefono?:string,cuit?:string,razonSocial?:string) {
+    constructor(nombre: string,
+        pais: string,
+        provincia: string,
+        ciudad: string,
+        direccion: string,
+        email: string,
+        celular?: string,
+        telefono?: string,
+        cuit?: string,
+        razonSocial?: string) {
         this.nombre = nombre;
         this.pais = pais;
         this.provincia = provincia;
         this.ciudad = ciudad;
         this.direccion = direccion;
+        this.email = email;
         this.celular = celular;
         this.telefono = telefono;
         this.cuit = cuit;
