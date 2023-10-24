@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { OrdenService } from './orden.service';
 import { CreateOrdenDto } from './dto/create-orden.dto';
 import { PartialUpdateOrdenDto } from './dto/partial-update-orden.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/roles/roles.decorator';
 
 @Controller('orden')
 export class OrdenController {
@@ -11,6 +13,7 @@ export class OrdenController {
   create(@Body() createOrdenDto: CreateOrdenDto) {
     return this.ordenService.create(createOrdenDto);
   };
+
 
   @Get()
   findAll() {
@@ -22,16 +25,19 @@ export class OrdenController {
     return this.ordenService.findOne(+id);
   };
 
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOrdenDto: PartialUpdateOrdenDto) {
     return this.ordenService.update(+id, updateOrdenDto);
   };
 
+ 
   @Patch(':id/estado')
   changeEstado(@Param('id') id: string) {
     return this.ordenService.changeEstado(+id);
   };
 
+ 
   @Patch(':id/presupuestoNA')
   presupuestoNoAprobado(@Param('id') id: string) {
     return this.ordenService.presupuestoNA(+id);
@@ -42,6 +48,8 @@ export class OrdenController {
     return this.ordenService.changeToPresupuestada(+id);
   };
 
+  @Roles('admin')
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.ordenService.remove(+id);

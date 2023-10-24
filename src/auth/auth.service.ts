@@ -23,11 +23,10 @@ export class AuthService {
       throw new BadRequestException('El usuario ya existe');
     }
 
-    return await this.usersService.create({
-      name,
-      email,
-      password: await bcrypt.hash(password, 10),
-    });
+    let userCreate = await this.usersService.create({name,email,password: await bcrypt.hash(password, 10)});
+
+    if (!userCreate) { throw new Error('No se pudo guardar el usuario')}
+
   }
 
   async login({ email, password }: LoginDto) {
