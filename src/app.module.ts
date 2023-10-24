@@ -11,6 +11,7 @@ import { TipoEquipoModule } from './tipo_equipo/tipo_equipo.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { TableViewModule } from './view/tableView.module';
+import { NegocioModule } from './negocio/negocio.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { TableViewModule } from './view/tableView.module';
     TipoEquipoModule,
     AuthModule,
     UsersModule,
-    TableViewModule
+    TableViewModule,
+    NegocioModule
   ],
   controllers: [AppController],
   providers: [AppService],
