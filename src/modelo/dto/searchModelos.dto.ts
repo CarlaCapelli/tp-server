@@ -1,9 +1,9 @@
-import { IsNotEmpty, IsNumber} from "class-validator";
+import { IsNotEmpty, IsNumberString} from "class-validator";
 
 export class SearchModelosDto {
-  @IsNotEmpty() @IsNumber()
+  @IsNotEmpty() @IsNumberString()
   readonly id_tipo_equipo: number;
 
-  @IsNotEmpty() @IsNumber()
+  @IsNotEmpty() @IsNumberString()
   readonly id_marca: number;
 }
