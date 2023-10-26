@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { OrdenService } from './orden.service';
 import { CreateOrdenDto } from './dto/create-orden.dto';
 import { PartialUpdateOrdenDto } from './dto/partial-update-orden.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Roles } from 'src/auth/roles/roles.decorator';
+import { Role } from 'src/common/enum/rol.enum';
 
 @Controller('orden')
 export class OrdenController {
@@ -48,10 +49,13 @@ export class OrdenController {
     return this.ordenService.changeToPresupuestada(+id);
   };
 
-  @Roles('admin')
   @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Req() res, @Param('id') id: string ) {
+    console.log(res.role)
+    if (res.user.role != Role.ADMIN){
+      return ('No tiene permisos suficientes para acceder a esta funcion')
+    }
     return this.ordenService.remove(+id);
   };
 }
