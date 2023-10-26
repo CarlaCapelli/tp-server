@@ -12,32 +12,29 @@ export class MarcaService {
     private readonly marcaRepository: Repository<Marca>,
   ) {}
 
-  async create(marcaDto: MarcaDto): Promise<Marca> {
+  async create(marcaDto: MarcaDto): Promise<any> {
     const marcaExistente = await this.marcaRepository
       .createQueryBuilder('marca')
       .where('marca.nombre = :nombre', { nombre: marcaDto.nombre })
       .getOne();
 
-    if (marcaExistente) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'Ya existe una marca con este nombre.',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    if (marcaExistente) {return {mensaje:"Ya existe marca",creado:false}    }
 
     try {
       let marca: Marca = await this.marcaRepository.save(
         new Marca(marcaDto.nombre),
       );
+
+      if (!marca){
+        throw new Error("No se pudo guardar marca")
+      }
+      
       return marca;
     } catch (error) {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Error al crear la marca ' + error,
+          error: 'Error al crear la marca: ' + error,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
