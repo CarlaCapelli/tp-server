@@ -104,6 +104,9 @@ export class ClienteService {
       }
     }
     catch (error) {
+      if (error.message.includes('Cannot delete or update a parent row')) {
+        throw new Error('CLIENTE_EN_USO');
+      }
       throw new HttpException(
         { status: HttpStatus.NOT_FOUND, error: `${error}` },
         HttpStatus.NOT_FOUND)

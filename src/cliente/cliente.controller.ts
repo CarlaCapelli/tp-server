@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
 import { ClienteService } from './cliente.service';
 import { ClienteDto } from './dto/cliente.dto';
 import { PartialUpdateClienteDto } from './dto/partial-update-cliente.dto';
@@ -28,7 +28,15 @@ export class ClienteController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clienteService.remove(+id);
+  async deleteCliente(@Param('id') id: number) {
+    try {
+      await this.clienteService.remove(id);
+      return true;
+    } catch (error) {
+      if (error.message === 'CLIENTE_EN_USO') {
+        throw new NotFoundException('ERROR_CLIENTE_EN_USO');
+      }
+      throw error; // Re-throw other errors
+    }
   }
 }
