@@ -26,6 +26,10 @@ export class OrdenController {
     return this.ordenService.findOne(+id);
   };
 
+  @Get('/cliente/:id')
+  getOrdenes(@Param('id') id:string) {
+    return this.ordenService.findOrdenesCliente(+id)
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOrdenDto: PartialUpdateOrdenDto) {

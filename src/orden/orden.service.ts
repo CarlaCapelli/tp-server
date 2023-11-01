@@ -6,6 +6,7 @@ import { Cliente } from 'src/cliente/entities/cliente.entity';
 import { CreateOrdenDto } from './dto/create-orden.dto';
 import { Equipo } from 'src/equipo/entities/equipo.entity';
 import { PartialUpdateOrdenDto } from './dto/partial-update-orden.dto';
+import { error } from 'console';
 
 @Injectable()
 export class OrdenService {
@@ -224,9 +225,30 @@ export class OrdenService {
           return ordenSave
         }
       } else {
-        throw new Error ("Orden no tiene estado para ser presupuestada nuevamente")
+        throw new Error("Orden no tiene estado para ser presupuestada nuevamente")
       }
     } catch (error) {
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: `${error}` },
+        HttpStatus.NOT_FOUND)
+    }
+  }
+
+  async findOrdenesCliente(id: number): Promise<Orden[]> {
+    try {
+      let criterio: FindManyOptions = {
+        where: { cliente: { id: id } },
+        relations: ['equipo','equipo.modelo.tipoEquipo', 'equipo.modelo.marca', 'equipo.modelo'],
+        select:['id', 'falla', 'equipo.modelo.nombre']
+      }
+
+      let ordenesCliente: Orden[] = await this.ordenRepository.find(criterio);
+
+      if (!ordenesCliente) { throw new Error('Error al acceder a datos') }
+
+      return ordenesCliente
+    }
+    catch (error) {
       throw new HttpException(
         { status: HttpStatus.NOT_FOUND, error: `${error}` },
         HttpStatus.NOT_FOUND)
