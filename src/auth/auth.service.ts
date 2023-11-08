@@ -8,49 +8,101 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { ChangeRoleDto } from 'src/users/dto/changeRole.dto';
+import { ChangePasswordDto } from 'src/users/dto/changePassword.dto';
+import { NewPasswordDto } from 'src/users/dto/newPassword.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
-  async register({ name, email, password }: RegisterDto) {
-    const user = await this.usersService.findOneByEmail(email);
-
+  // METODO REGISTRAR NUEVO USUARIO
+  async register({ name, username, password }: RegisterDto) {
+    const user = await this.usersService.findOneByUsername(username);
     if (user) {
       throw new BadRequestException('El usuario ya existe');
     }
-
-    let userCreate = await this.usersService.create({name,email,password: await bcrypt.hash(password, 10)});
-
-    if (!userCreate) { throw new Error('No se pudo guardar el usuario')}
-
-  }
-
-  async login({ email, password }: LoginDto) {
-    const user = await this.usersService.findByEmailWithPassword(email);
-
-    if (!user) {
-      throw new UnauthorizedException('email erroneo');
+    let userCreate = await this.usersService.create({ name, username, password: await bcrypt.hash(password, 10) });
+    if (!userCreate) { 
+      throw new Error('No se pudo guardar el usuario') 
     }
+    return true
+  };
 
+  // METODO LOGUEO
+  async login({ username, password }: LoginDto) {
+    const user = await this.usersService.findByUsernameWithPassword(username);
+    if (!user) {
+      throw new UnauthorizedException('Usuario no encontrado');
+    }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('password incorrecto');
+      throw new UnauthorizedException('Password incorrecto');
     }
-
-    const payload = { email: user.email, role: user.role };
+    const payload = { username: user.username, role: user.role.toLowerCase() };
     const access_token = await this.jwtService.signAsync(payload);
-    const userName = user.name
+    const name = user.name
     const role = user.role
+    return { access_token, username, name, role };
+  };
 
-    return {
-      access_token,
-      email,
-      userName,
-      role
-    };
+  // METODO RETORNA TODOS LOS USUARIOS (Sin contraseña)
+  async getAllUsers() {
+    const users = await this.usersService.findAll();
+    return users
+  }
+
+  // METODO RETORNA LOS DATOS DE UN USUARIO
+  async getUserData(username) {
+    const user = await this.usersService.findOneByUsername(username);
+    return user
+  }
+
+  // METODO CAMBIAR ROL ( SOLO ADMIN )
+  async changeRole(changeRoleDto: ChangeRoleDto) {
+    try {
+      let changeRole = await this.usersService.changeRole(changeRoleDto);
+      if (changeRole == true) {
+        return true
+      }
+    }
+    catch (error) {
+      throw new Error("No se pudo cambiar el rol")
+    }
+  }a
+
+  // METODO CAMBIAR PASSWORD
+  async changePassword(changePasswordDto: ChangePasswordDto) {
+    const user = await this.usersService.findByUsernameWithPassword(changePasswordDto.username);
+    const isPasswordValid = await bcrypt.compare(changePasswordDto.oldPassword, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Password actual incorrecto');
+    }
+    const isSamePassword = await bcrypt.compare(changePasswordDto.newPassword, user.password);
+    if (isSamePassword){
+      throw new UnauthorizedException('El password nuevo coincide con el actual');
+    }
+    let newPasswordHash = await bcrypt.hash(changePasswordDto.newPassword, 10)
+    user.password = newPasswordHash
+    let change = await this.usersService.save(user)
+    if (!change) {
+      throw new Error("No se pudo guardar la contraseña")
+    }
+    return true
+  }
+
+  // METODO RESETEAR PASSWORD (SOLO ADMIN)
+  async resetPassword(newPasswordDto: NewPasswordDto) {
+    const user = await this.usersService.findByUsernameWithPassword(newPasswordDto.username);
+    let newPasswordHash = await bcrypt.hash(newPasswordDto.newPassword, 10)
+    user.password = newPasswordHash
+    let change = await this.usersService.save(user)
+    if (!change) {
+      throw new Error("No se pudo guardar la contraseña")
+    }
+    return true
   }
 }

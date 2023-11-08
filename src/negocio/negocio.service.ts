@@ -28,6 +28,8 @@ export class NegocioService {
                 negocioDto.direccion, negocioDto.email,
                 negocioDto.celular, negocioDto.telefono, 
                 negocioDto.cuit, negocioDto.razonSocial);
+            
+            newNegocio.setId(1)
 
             let negocio = await this.negocioRepository.save(newNegocio);
 
@@ -44,7 +46,7 @@ export class NegocioService {
 
     async update(updateNegocioDto: PartialUpdateNegocioDto) {
         try {
-          let criterio: FindOneOptions = { where: { id: !null } };
+          let criterio: FindOneOptions = { where: { id: 1 } };
           let negocio: Negocio = await this.negocioRepository.findOne(criterio);
           if (!negocio) {
             throw new Error('Aun no se ha creado el negocio');
@@ -68,7 +70,7 @@ export class NegocioService {
 
       async get(): Promise<Negocio> {
         try {
-            let criterio: FindOneOptions = {where: {id:!null}}
+            let criterio: FindOneOptions = {where: {id:1}}
 
             let negocio : Promise<Negocio> = this.negocioRepository.findOne(criterio)
 
