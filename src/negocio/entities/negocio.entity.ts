@@ -21,7 +21,7 @@ export class Negocio {
     @Column({ type: 'varchar', length: 300 })
     private direccion: string;
 
-    @Column({ type: 'varchar', length: 320 })
+    @Column({ type: 'varchar', length: 320, default: null})
     private email: string;
 
     @Column({ type: 'varchar', length: 30, default: null })
@@ -41,7 +41,7 @@ export class Negocio {
         provincia: string,
         ciudad: string,
         direccion: string,
-        email: string,
+        email?: string,
         celular?: string,
         telefono?: string,
         cuit?: string,
@@ -61,6 +61,10 @@ export class Negocio {
     public getId(): number {
         return this.id;
     };
+
+    public setId(newId){
+        this.id = newId
+    }
 
     public getNombre(): string {
         return this.nombre;

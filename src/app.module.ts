@@ -17,11 +17,11 @@ import { NegocioModule } from './negocio/negocio.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'bwcundda0dgl9otj5tky-mysql.services.clever-cloud.com',
+      host:   'localhost'    ,//'bwcundda0dgl9otj5tky-mysql.services.clever-cloud.com',
       port: 3306,
-      username: 'ujhs0fftir2vghah',
-      password: 'Wl57GFgpqbLquINI06fr', 
-      database: 'bwcundda0dgl9otj5tky',
+      username: 'root',//'ujhs0fftir2vghah',
+      password: '12345678',//'Wl57GFgpqbLquINI06fr', 
+      database: 'soat',//'bwcundda0dgl9otj5tky',
       entities: [__dirname + '/../dist/**/entities/*.entity.{js,ts}', __dirname + '/../dist/**/*.entity.{js,ts}'],
       synchronize: true,
     }),

@@ -17,8 +17,8 @@ export class CreateNegocioDto {
     @IsNotEmpty() @IsString() @MaxLength(300)
     readonly direccion: string;
 
-    @IsNotEmpty() @IsEmail() @MaxLength(320)
-    readonly email: string;
+    @IsOptional() @IsNotEmpty() @IsEmail() @MaxLength(320)
+    readonly email?: string;
 
     @IsOptional() @IsString() @MaxLength(30) 
     readonly telefono?: string;

@@ -15,7 +15,7 @@ export class User {
   name: string;
 
   @Column({ unique: true, nullable: false })
-  email: string;
+  username: string;
 
   @Column({ nullable: false, select: false })
   password: string;
@@ -25,4 +25,36 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  /// METODOS
+
+  public getId(): number {
+    return this.id;
+  };
+
+  public getPassword(): string{
+    return this.password
+  }
+
+  public changeName(newName){
+    this.name = newName
+    return true
+  }
+
+  public changeRole(newRole:Role){
+    this.role = newRole
+    return true
+  }
+
+  public changeUsername(newUsername){
+    this.username= newUsername
+    return true
+  }
+
+  public changePassword(newPassword){
+    this.password = newPassword
+    return true
+  }
+
+
 }
