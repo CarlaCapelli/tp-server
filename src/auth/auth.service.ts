@@ -8,7 +8,6 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { ChangeRoleDto } from 'src/users/dto/changeRole.dto';
 import { ChangePasswordDto } from 'src/users/dto/changePassword.dto';
 import { NewPasswordDto } from 'src/users/dto/newPassword.dto';
 
@@ -61,18 +60,6 @@ export class AuthService {
     return user
   }
 
-  // METODO CAMBIAR ROL ( SOLO ADMIN )
-  async changeRole(changeRoleDto: ChangeRoleDto) {
-    try {
-      let changeRole = await this.usersService.changeRole(changeRoleDto);
-      if (changeRole == true) {
-        return true
-      }
-    }
-    catch (error) {
-      throw new Error("No se pudo cambiar el rol")
-    }
-  }a
 
   // METODO CAMBIAR PASSWORD
   async changePassword(changePasswordDto: ChangePasswordDto) {

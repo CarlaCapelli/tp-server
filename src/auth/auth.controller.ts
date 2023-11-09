@@ -5,7 +5,6 @@ import { RegisterDto } from './dto/register.dto';
 import { Get, UseGuards } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 import { Role } from 'src/common/enum/rol.enum';
-import { ChangeRoleDto } from 'src/users/dto/changeRole.dto';
 import { UsersService } from 'src/users/users.service';
 import { PartialUpdateUserDto } from 'src/users/dto/partial-update-user.dto';
 import { ChangePasswordDto } from 'src/users/dto/changePassword.dto';
@@ -17,7 +16,6 @@ import { RolesGuard } from './role/role.guard';
 export class AuthController {
 
   constructor(private readonly authService: AuthService,
-
     private readonly usersService: UsersService) {
   }
 
@@ -55,23 +53,11 @@ export class AuthController {
     return this.usersService.updateUser(updateUserDto);
   }
 
-  // CAMBIO DE ROL (SOLO ADMIN)
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
-  @UseGuards(AuthGuard, RolesGuard)
-  @Patch('role')
-  changeRol(@Body() changeRoleDto: ChangeRoleDto) {
-    return this.authService.changeRole(changeRoleDto)
-  }
-
   // RESETEO DE PASSWORD (SOLO ADMIN)
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Patch('resetpassword')
   newPass(@Req() res, @Body() newPasswordDto: NewPasswordDto) {
-    if (res.user.role != Role.ADMIN) {
-      return ('No tiene permisos suficientes para acceder a esta funcion')
-    }
     return this.authService.resetPassword(newPasswordDto)
   }
 
