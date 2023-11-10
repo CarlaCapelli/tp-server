@@ -15,7 +15,7 @@ export class ClienteService {
 
   async create(createClienteDto: ClienteDto) {
     try {
-      let newCliente: Cliente = new Cliente(createClienteDto.nombre, createClienteDto.telefono, createClienteDto.dni,createClienteDto.descripcion)
+      let newCliente: Cliente = new Cliente(createClienteDto.nombre, createClienteDto.telefono, createClienteDto.dni, createClienteDto.descripcion)
       let cliente: Cliente = await this.clienteRepository.save(newCliente);
 
       if (!cliente) {
@@ -32,13 +32,13 @@ export class ClienteService {
   };
 
   async findAll() {
-    try{
+    try {
       let allClientes: Cliente[] = await this.clienteRepository.find();
-      if (!allClientes){
+      if (!allClientes) {
         throw new Error('No se pudo acceder a los datos de clientes')
       }
       return allClientes;
-    } catch(error) {
+    } catch (error) {
       throw new HttpException(
         { status: HttpStatus.NOT_FOUND, error: `${error}` },
         HttpStatus.NOT_FOUND)
@@ -94,11 +94,11 @@ export class ClienteService {
       let cliente = await this.clienteRepository.findOne(criterio)
       if (!cliente) {
         throw new Error(`No se pudo encontrar id: ` + id)
-      } 
+      }
 
       let clienteDelete = await this.clienteRepository.delete(id)
-      if (!clienteDelete){
-        throw new Error('No se pudo borrar cliente id:'+id)
+      if (!clienteDelete) {
+        throw new Error('No se pudo borrar cliente id:' + id)
       } else {
         return true
       }
