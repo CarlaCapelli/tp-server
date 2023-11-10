@@ -8,6 +8,7 @@ import { Roles } from 'src/auth/roles/roles.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/role/role.guard';
 
+
 @Controller('negocio')
 export class NegocioController {
     constructor(private readonly negocioService: NegocioService) { }

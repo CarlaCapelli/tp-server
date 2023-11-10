@@ -36,7 +36,7 @@ export class ClienteController {
       if (error.message === 'CLIENTE_EN_USO') {
         throw new NotFoundException('ERROR_CLIENTE_EN_USO');
       }
-      throw error; // Re-throw other errors
+      throw error;
     }
   }
 }
