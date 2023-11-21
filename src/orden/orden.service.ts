@@ -6,10 +6,12 @@ import { Cliente } from 'src/cliente/entities/cliente.entity';
 import { CreateOrdenDto } from './dto/create-orden.dto';
 import { Equipo } from 'src/equipo/entities/equipo.entity';
 import { PartialUpdateOrdenDto } from './dto/partial-update-orden.dto';
-import { error } from 'console';
 
 @Injectable()
 export class OrdenService {
+
+  // Saltear estado 0 (Ingresada)
+  saltearEstado0 = false;
 
   constructor(
     @InjectRepository(Orden)
@@ -37,6 +39,11 @@ export class OrdenService {
       let newOrden = new Orden(ordenDto.falla, ordenDto.accesorio, this.fechaActual());
       newOrden.cliente = cliente;
       newOrden.equipo = equipo;
+
+      // Saltear estado Ingresada
+      if (this.saltearEstado0){
+        newOrden.setEstado(1)
+      }
 
       let orden = await this.ordenRepository.save(newOrden);
 
@@ -262,7 +269,8 @@ export class OrdenService {
       if (!orden) {
         throw new Error(`No se pudo encontrar id: ` + id)
       }
-      orden.setEstado(6)
+      orden.deleteOrden();
+      orden.setFechaEliminada(this.fechaActual());
       let deleteStatus = await this.ordenRepository.save(orden)
       if (!deleteStatus) {
         throw new Error('No se pudo eliminar la orden')
@@ -276,4 +284,26 @@ export class OrdenService {
         HttpStatus.NOT_FOUND)
     }
   };
+
+  public async restore(id: number): Promise<Boolean> {
+    try {
+      const criterio: FindOneOptions = { where: { id: id } }
+      let orden = await this.ordenRepository.findOne(criterio)
+      if (!orden) {
+        throw new Error(`No se pudo encontrar id: ` + id)
+      }
+      orden.restoreOrden();
+      let restoreStatus = await this.ordenRepository.save(orden)
+      if (!restoreStatus) {
+        throw new Error('No se pudo restaurar la orden')
+      } else {
+        return true
+      }
+    }
+    catch (error) {
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: `${error}` },
+        HttpStatus.NOT_FOUND)
+    }
+  }
 }

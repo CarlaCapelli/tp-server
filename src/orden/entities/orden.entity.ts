@@ -50,6 +50,9 @@ export class Orden {
   @Column({ default: () => 0, type: 'tinyint', width: 1 })
   private estado: number;
 
+  @Column({ nullable: true, type: 'tinyint', width: 1  })
+  private estadoDeleted: number;
+
   constructor(falla: string, accesorio:string, fechaIngreso:Date) {
     this.falla = falla;
     this.accesorio = accesorio;
@@ -92,7 +95,6 @@ export class Orden {
     this.presupuesto = newPresupuesto;
   };
 
-
   public getPresupuestoAprobado(): boolean{
     return this.presupuestoAprobado
   };
@@ -116,6 +118,18 @@ export class Orden {
   public setEstado(newEstado:number): void {
     this.estado = newEstado;
   };
+
+  public deleteOrden():void {
+    this.estadoDeleted = this.estado;
+    this.estado = 6;
+  }
+
+  public restoreOrden(): void {
+    this.estado = this.estadoDeleted
+    this.estadoDeleted = null;
+    this.fechaEliminada = null;
+  };
+
 
   // Fechas estados //
 

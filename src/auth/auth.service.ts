@@ -25,8 +25,8 @@ export class AuthService {
       throw new BadRequestException('El usuario ya existe');
     }
     let userCreate = await this.usersService.create({ name, username, password: await bcrypt.hash(password, 10) });
-    if (!userCreate) { 
-      throw new Error('No se pudo guardar el usuario') 
+    if (!userCreate) {
+      throw new Error('No se pudo guardar el usuario')
     }
     return true
   };
@@ -69,7 +69,7 @@ export class AuthService {
       throw new UnauthorizedException('Password actual incorrecto');
     }
     const isSamePassword = await bcrypt.compare(changePasswordDto.newPassword, user.password);
-    if (isSamePassword){
+    if (isSamePassword) {
       throw new UnauthorizedException('El password nuevo coincide con el actual');
     }
     let newPasswordHash = await bcrypt.hash(changePasswordDto.newPassword, 10)
@@ -88,6 +88,26 @@ export class AuthService {
     user.password = newPasswordHash
     let change = await this.usersService.save(user)
     if (!change) {
+      throw new Error("No se pudo guardar la contraseña")
+    }
+    return true
+  }
+
+  // METODO ELIMINAR USUARIO
+  async deleteUser(username:string) {
+    let userDelete = await this.usersService.delete(username);
+
+    if (!userDelete) {
+      throw new Error("No se pudo guardar la contraseña")
+    }
+    return true
+  }
+
+  // METODO RESTAURAR USUARIO
+  async restoreUser(username:string) {
+    let userDelete = await this.usersService.restore(username);
+
+    if (!userDelete) {
       throw new Error("No se pudo guardar la contraseña")
     }
     return true
