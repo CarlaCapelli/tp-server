@@ -11,7 +11,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true, nullable: false })
+  @Column({ nullable: false })
   name: string;
 
   @Column({ unique: true, nullable: false })
@@ -56,5 +56,14 @@ export class User {
     return true
   }
 
+  public softDelete(){
+    this.deletedAt = new Date;
+    return true
+  }
+
+  public restore(){
+    this.deletedAt = null
+    return true
+  }
 
 }

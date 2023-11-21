@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { OrdenService } from './orden.service';
 import { CreateOrdenDto } from './dto/create-orden.dto';
 import { PartialUpdateOrdenDto } from './dto/partial-update-orden.dto';
@@ -9,7 +9,7 @@ import { RolesGuard } from 'src/auth/role/role.guard';
 
 @Controller('orden')
 export class OrdenController {
-  constructor(private readonly ordenService: OrdenService) {}
+  constructor(private readonly ordenService: OrdenService) { }
 
   // NUEVA ORDEN
   @Post('new')
@@ -31,7 +31,7 @@ export class OrdenController {
 
   // OBTENER ORDENES DE UN CLIENTE
   @Get('/cliente/:id')
-  getOrdenes(@Param('id') id:string) {
+  getOrdenes(@Param('id') id: string) {
     return this.ordenService.findOrdenesCliente(+id)
   }
 
@@ -63,7 +63,15 @@ export class OrdenController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Delete(':id')
-  remove(@Param('id') id: string ) {
+  remove(@Param('id') id: string) {
     return this.ordenService.remove(+id);
+  };
+
+  // RESTAURAR ORDEN (SOLO ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @Patch('restore/:id')
+  restore(@Param('id') id: string) {
+    return this.ordenService.restore(+id);
   };
 }

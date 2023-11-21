@@ -2,14 +2,21 @@ import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsString, MinLength, NotContains } from 'class-validator';
 
 export class RegisterDto {
-  @Transform(({ value }) => value.trim())
-  @IsString() @IsNotEmpty() 
+  @Transform(({ value }) => (value ? value.trim() : value))
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(5)
   name: string;
 
-  @IsString() @NotContains(" ")
+  @IsString()
+  @NotContains(" ")
+  @MinLength(5)
+  @IsNotEmpty()
   username: string;
 
-  @Transform(({ value }) => value.trim())
-  @IsString() @MinLength(6)
+  @Transform(({ value }) => (value ? value.trim() : value))
+  @IsString()
+  @MinLength(6)
   password: string;
 }
+

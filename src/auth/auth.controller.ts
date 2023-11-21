@@ -1,5 +1,5 @@
 import { AuthService } from './auth.service';
-import { Body, Controller, Param, Patch, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Patch, Post, Req } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { Get, UseGuards } from '@nestjs/common';
@@ -67,5 +67,13 @@ export class AuthController {
   @Get('users')
   getAll() {
     return this.authService.getAllUsers();
+  }
+
+  // ELIMINAR USUARIO (SOLO ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @Delete('user/:username')
+  deleteUser(@Param('username') username: string) {
+    return this.authService.deleteUser(username);
   }
 }

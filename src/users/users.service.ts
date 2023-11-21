@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { FindOneOptions, Repository } from 'typeorm';
+import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PartialUpdateUserDto } from './dto/partial-update-user.dto';
 
@@ -45,6 +45,44 @@ export class UsersService {
     return true
   }
 
+
+  /// ELIMINAR USUARIO
+  async delete(username: string) {
+    let user = await this.userRepository.findOneBy({ username });
+
+    if (!user) {
+      throw new Error('No se encontró usuario')
+    }
+    
+    // let userDelete = await user.softDelete()
+    let criterioDelete : FindOptionsWhere<User> = { username:user.username }
+
+    let userDelete = await this.userRepository.delete(criterioDelete)
+
+    if (!userDelete) {
+      throw new Error('No se pudo eliminar usuario')
+    }
+
+    return true
+  }
+
+  /// RESTAURAR USUARIO
+  async restore(username: string) {
+    let user = await this.userRepository.findOneBy({ username });
+
+    if (!user) {
+      throw new Error('No se encontró usuario')
+    }
+
+    let userDelete = await user.restore()
+
+    if (!userDelete) {
+      throw new Error('No se pudo eliminar usuario')
+    }
+
+    return true
+  }
+
   // ACTUALIZAR INFORMACION DE USUARIO POR ID
   async updateUser(userDto: PartialUpdateUserDto) {
     try {
@@ -55,7 +93,7 @@ export class UsersService {
       if (!user) {
         throw new Error('No se encontró usuario')
       };
-    
+
       // Si el username se cambio y está en uso
       let usernameUsed = await this.findOneByUsername(userDto.username)
       if (userDto.username !== user.username && usernameUsed != null) {
