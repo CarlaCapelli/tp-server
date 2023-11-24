@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsNumberString, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class ClienteDto {
     
@@ -8,10 +8,10 @@ export class ClienteDto {
     @IsNotEmpty() @MaxLength(50)
     readonly telefono:string;
 
-    @IsOptional() @IsNumber() @MaxLength(10)
+    @IsOptional()
     readonly dni?: number;
 
-    @IsString() @MaxLength(750)
+    @IsOptional() @IsString() @MaxLength(750)
     readonly descripcion?:string;
 
 }
