@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class PartialUpdateClienteDto {
     @IsOptional() @IsNotEmpty() @IsString() @MaxLength(550)
@@ -7,8 +7,8 @@ export class PartialUpdateClienteDto {
     @IsOptional() @IsNotEmpty() @MaxLength(50)
     readonly telefono?:string;
 
-    @IsOptional() @IsNumber() @MaxLength(10)
-    readonly dni?: number;
+    @IsOptional() 
+    readonly dni?: string;
 
     @IsOptional() @IsString() @MaxLength(750)
     readonly descripcion?:string;
