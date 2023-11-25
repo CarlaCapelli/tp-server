@@ -70,7 +70,7 @@ export class OrdenController {
   // RESTAURAR ORDEN (SOLO ADMIN)
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  @Patch('restore/:id')
+  @Patch(':id/restore')
   restore(@Param('id') id: string) {
     return this.ordenService.restore(+id);
   };

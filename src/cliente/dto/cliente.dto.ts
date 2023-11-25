@@ -8,10 +8,10 @@ export class ClienteDto {
     @IsNotEmpty() @MaxLength(50)
     readonly telefono:string;
 
-    @IsOptional()
+    @IsOptional() // REVISAR
     readonly dni?: number;
 
-    @IsOptional() @IsString() @MaxLength(750)
+    @IsOptional() @IsString() @MaxLength(750)  // REVISAR
     readonly descripcion?:string;
 
 }
