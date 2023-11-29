@@ -29,7 +29,8 @@ export class TableView {
 
   @ViewColumn()
   falla: string;
-
+  @ViewColumn()
+  tipoEquipo: string;
   @ViewColumn()
   nombre: string;
   @ViewColumn()
