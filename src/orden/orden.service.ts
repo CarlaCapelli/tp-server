@@ -36,7 +36,7 @@ export class OrdenService {
         throw new Error('No se encontró el equipo id: ' + ordenDto.id_equipo)
       };
 
-      let newOrden = new Orden(ordenDto.falla, ordenDto.accesorio, this.fechaActual());
+      let newOrden = new Orden(ordenDto.falla, this.fechaActual(), ordenDto.accesorio);
       newOrden.cliente = cliente;
       newOrden.equipo = equipo;
 
@@ -196,6 +196,35 @@ export class OrdenService {
         } else {
           orden.setEstado(4);
           orden.setPresupuestoAprobado(false);
+          orden.setFechaTerminada(this.fechaActual())
+          let ordenSave = await this.ordenRepository.save(orden);
+          if (!ordenSave) {
+            throw new Error("no se pudo cambiar el estado de la orden")
+          } else {
+            return ordenSave
+          }
+        }
+      };
+    } catch (error) {
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: `${error}` },
+        HttpStatus.NOT_FOUND)
+    }
+  };
+
+  async sinReparacion(idOrden: number) { // Presupuesto no aprobado
+    try {
+      let criterio: FindOneOptions = { where: { id: idOrden } };
+      let orden: Orden = await this.ordenRepository.findOne(criterio);
+      if (!orden) {
+        throw new Error('No se encuentra la orden id: ' + idOrden);
+      } else {
+        let estado = orden.getEstado();
+        if (estado != 1) {
+          throw new Error(`Orden ${idOrden} no está en diagnostico`)
+        } else {
+          orden.setSinReparacion(true)
+          orden.setEstado(4);
           orden.setFechaTerminada(this.fechaActual())
           let ordenSave = await this.ordenRepository.save(orden);
           if (!ordenSave) {
