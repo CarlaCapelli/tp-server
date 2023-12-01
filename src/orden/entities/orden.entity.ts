@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column,JoinColumn, ManyToOne } from 'typeorm';
-import { Cliente } from 'src/cliente/entities/cliente.entity';
-import { Equipo } from 'src/equipo/entities/equipo.entity';
+import { Cliente } from '../../cliente/entities/cliente.entity';
+import { Equipo } from '../../equipo/entities/equipo.entity';
 
 @Entity('orden')
 export class Orden {
@@ -44,6 +44,9 @@ export class Orden {
   @Column({ default: () => false, type: 'boolean'})
   private presupuestoAprobado: boolean;
 
+  @Column({ default: () => false, type: 'boolean'})
+  private sinReparacion: boolean;
+
   @Column({ nullable: true, type: 'decimal', precision: 12, scale: 2})
   private importe: number;
 
@@ -53,10 +56,10 @@ export class Orden {
   @Column({ nullable: true, type: 'tinyint', width: 1  })
   private estadoDeleted: number;
 
-  constructor(falla: string, accesorio:string, fechaIngreso:Date) {
+  constructor(falla: string,fechaIngreso:Date, accesorio?:string, ) {
     this.falla = falla;
+    this.fechaIngreso = fechaIngreso;
     this.accesorio = accesorio;
-    this.fechaIngreso = fechaIngreso
   };
 
   public getIdOrden(): number {
@@ -106,6 +109,14 @@ export class Orden {
   public getImporte():number {
     return this.importe;
   };
+
+  public getSinReparacion():boolean {
+    return this.sinReparacion;
+  };
+
+  public setSinReparacion(estado:boolean):void{
+    this.sinReparacion = estado
+  }
 
   public setImporte(newImporte: number):void{
     this.importe = newImporte;

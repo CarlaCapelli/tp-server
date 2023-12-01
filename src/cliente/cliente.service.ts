@@ -15,7 +15,7 @@ export class ClienteService {
 
   async create(createClienteDto: ClienteDto) {
     try {
-      let newCliente: Cliente = new Cliente(createClienteDto.nombre, createClienteDto.telefono, createClienteDto.dni, createClienteDto.descripcion)
+      let newCliente: Cliente = new Cliente(createClienteDto.nombre, createClienteDto.telefono, createClienteDto?.dni, createClienteDto?.descripcion)
       let cliente: Cliente = await this.clienteRepository.save(newCliente);
 
       if (!cliente) {

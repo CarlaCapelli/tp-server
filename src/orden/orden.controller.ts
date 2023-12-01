@@ -47,6 +47,12 @@ export class OrdenController {
     return this.ordenService.changeEstado(+id);
   };
 
+  // SIN REPARACION
+  @Patch(':id/sinReparacion')
+  sinReparacion(@Param('id') id: string) {
+    return this.ordenService.sinReparacion(+id);
+  };
+
   // PRESUPUESTO NO APROBADO
   @Patch(':id/presupuestoNA')
   presupuestoNoAprobado(@Param('id') id: string) {
